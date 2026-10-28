@@ -54,19 +54,19 @@ function findAirport(text) {
 }
 
 /** Gather grounded facts from the conversation + page context. */
-function gather(msgs, ctx, svc, now) {
+async function gather(msgs, ctx, svc, now) {
   const userText = msgs.filter((m) => m.role === 'user').map((m) => m.content).join('\n');
   const last = [...msgs].reverse().find((m) => m.role === 'user')?.content || '';
   const facts = {}; let booking = null;
 
   // booking: from the page the user is on (they already hold the token), or PNR + e-mail typed in chat
-  if (ctx.bookingToken) { try { booking = svc.bookings.get(ctx.bookingToken); } catch { /* ignore */ } }
+  if (ctx.bookingToken) { try { booking = await svc.bookings.get(ctx.bookingToken); } catch { /* ignore */ } }
   const email = (userText.match(EMAIL_RE) || [])[0];
   if (!booking && email) {
     const words = userText.match(/\b[A-Za-z0-9]{6}\b/g) || [];
     for (const w of [...new Set(words.map((x) => x.toUpperCase()))]) {
       if (!PNR_CHARS.test(w)) continue;
-      try { booking = svc.bookings.lookup(w, email); break; } catch { /* not this one */ }
+      try { booking = await svc.bookings.lookup(w, email); break; } catch { /* not this one */ }
     }
     if (!booking && words.some((w) => PNR_CHARS.test(w.toUpperCase()) && /\d/.test(w))) facts.bookingLookup = 'No booking matched that PNR and e-mail.';
   }
@@ -241,7 +241,7 @@ async function reply({ messages, context = {} }, svc, now = new Date()) {
   const msgs = sanitize(messages);
   if (!msgs.length || msgs[msgs.length - 1].role !== 'user') return { reply: 'Please type a question.', suggestions: suggestionsFor('other'), actions: [], intent: 'other', handoff: false, source: 'rules' };
   const last = msgs[msgs.length - 1].content;
-  const facts = gather(msgs, { bookingToken: typeof context.bookingToken === 'string' ? context.bookingToken : null }, svc, now);
+  const facts = await gather(msgs, { bookingToken: typeof context.bookingToken === 'string' ? context.bookingToken : null }, svc, now);
   const intent = intentOf(last);
   let text; let source = 'rules';
   if (config.anthropicKey) {

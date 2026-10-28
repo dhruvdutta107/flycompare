@@ -8,6 +8,10 @@
   var active = 0; var selected = []; var legData = []; var calendar = [];
   var f = { stops: { 0: true, 1: true }, excludeAirlines: {}, slots: { early: true, morning: true, afternoon: true, evening: true }, maxPrice: null, sort: 'price' };
   if (p.get('direct') === '1') f.stops[1] = false;
+  // CI finding (P1: "Wait, where did my filter go?"): keep filters + sort when the user comes back to this search
+  var FKEY = 'fc_filters:' + location.search;
+  try { var saved = JSON.parse(sessionStorage.getItem(FKEY)); if (saved) { f.stops = saved.stops; f.excludeAirlines = saved.excludeAirlines; f.slots = saved.slots; f.sort = saved.sort; } } catch (e) { /* ignore */ }
+  function saveFilters() { try { sessionStorage.setItem(FKEY, JSON.stringify({ stops: f.stops, excludeAirlines: f.excludeAirlines, slots: f.slots, sort: f.sort })); } catch (e) { /* ignore */ } }
 
   // ---------- parse URL ----------
   function parseSpec(q) {
@@ -42,6 +46,7 @@
   $('#modify-link').href = '/?' + toQuery();
   $('#results-wrap').classList.remove('hidden');
   $('#stepper').setAttribute('data-step', '1'); FC.renderStepper();
+  $$('#filter-stops input').forEach(function (i) { i.checked = !!f.stops[i.value]; }); $('#sort-select').value = f.sort;
   renderSummary(); loadLeg(0);
 
   function show(sel) { $(sel).classList.remove('hidden'); }
@@ -156,6 +161,7 @@
 
   // ---------- flight cards ----------
   function render() {
+    saveFilters();
     var d = legData[active]; if (!d) return;
     var list = visible(); var box = $('#flights-list');
     $('#results-count').textContent = list.length; $('#price-max-label').textContent = '≤ ' + FC.money(f.maxPrice);

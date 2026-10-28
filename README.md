@@ -1,7 +1,7 @@
 # FlyCompare — full-stack flight comparison & booking
 
 Compare domestic flight fares across airlines, hold a fare, pay, get an e-ticket, and manage or cancel bookings.
-This turns the static HCI prototype from Labs 6–8 into a deployable web app: **Node 22 + Express 5 + SQLite** backend,
+This turns the static HCI prototype from Labs 6–8 into a deployable web app: **Node 22 + Express 5** backend with a **Supabase (PostgreSQL)** database,
 a no-framework front-end styled with a compiled Tailwind build, and the same design tokens as the original prototype.
 
 > **Simulated data.** There is no live airline feed and no real payment gateway. Flights/fares come from a deterministic
@@ -16,7 +16,22 @@ npm run build      # compiles Tailwind CSS, self-hosts fonts, renders pages into
 npm start          # http://localhost:3000
 npm test           # 15 API/security tests (node:test)
 ```
-Requires Node ≥ 22.13 (uses the built-in `node:sqlite`; no native modules to compile).
+Requires Node ≥ 22.13.
+
+### Connecting Supabase
+1. In the Supabase dashboard open the **flycompare-db** project → **Connect** → **Session pooler** and copy the URI.
+2. `cp .env.example .env` and set `DATABASE_URL` to that URI, replacing `[YOUR-PASSWORD]` with the database password
+   (Project Settings → Database → reset it there if you don't have it).
+3. `npm install` (adds the `pg` driver) → `npm run db:check` should print `Connected to postgres`.
+4. `npm start` — the log says `database: Supabase/PostgreSQL`, and `GET /api/health` returns `"db":"postgres"`.
+
+The tables are created from `supabase/schema.sql` (already applied to the project; the server re-runs it on start-up and it is
+idempotent). Row Level Security is on with no policies and the `anon`/`authenticated` roles have no table privileges, so
+nothing is readable through Supabase's public REST API with the publishable key — only the Express server, which connects
+with the database password, can read or write. **Keep `DATABASE_URL` secret** (it is in `.gitignore` via `.env`).
+
+Without `DATABASE_URL` the same code runs on a local SQLite file (Node's built-in `node:sqlite`), which is what `npm test`
+uses (in-memory), so tests never touch the real database.
 
 **Demo payment inputs** – card `4111 1111 1111 1111` (any future expiry, any 3-digit CVV) succeeds · any card ending `0002` is declined ·
 ending `9995` = insufficient funds · UPI id containing `fail` is declined. Promo codes: `SUMMER40`, `NEWUSER500`, `WEEKEND750`.
@@ -76,7 +91,8 @@ src/transport.js       airport cabs / bus / metro options
 src/assistant.js       customer-service assistant (Claude API or rule-based fallback)
 src/security.js        headers/CSP, CSRF guard, rate limiter, password hashing, sessions
 src/validate.js        input validation
-src/db.js              SQLite schema (users, sessions, bookings, support_tickets)
+src/db.js              database driver: Supabase/PostgreSQL via `pg` (DATABASE_URL) or SQLite fallback
+supabase/schema.sql    PostgreSQL schema + API-role lock-down (users, sessions, bookings, support_tickets, reminders)
 web/                   page templates, JS, Tailwind input   →  `npm run build`  →  public/
 tests/api.test.js      end-to-end API + security tests
 ```
@@ -102,14 +118,15 @@ tests/api.test.js      end-to-end API + security tests
 **Docker (any host)**
 ```bash
 docker build -t flycompare .
-docker run -p 3000:3000 -v flycompare-data:/data -e TRUST_PROXY=1 flycompare
+docker run -p 3000:3000 -e TRUST_PROXY=1 -e DATABASE_URL='postgresql://...' flycompare
 ```
 
-**Render** – push the repo to GitHub → *New → Blueprint* → select it (`render.yaml` is included; it mounts a 1 GB disk at `/data` for SQLite).
-**Railway / Fly.io / Heroku-style hosts** – they run `npm run build` then `npm start`; add a persistent volume and set `DATABASE_PATH` to it,
+**Render** – push the repo to GitHub → *New → Blueprint* → select it (`render.yaml` is included) and paste `DATABASE_URL` when asked. No disk is needed, so the free plan works.
+**Railway / Fly.io / Heroku-style hosts** – they run `npm run build` then `npm start`; set `DATABASE_URL` (Supabase session pooler URI),
 and set `TRUST_PROXY=1`. See `.env.example`.
 
-SQLite lives in one file, so run **one instance** with a persistent disk. To scale out, move `src/db.js` to Postgres.
+With Supabase the server is stateless (except in-memory rate limits), so it can run on any host and be restarted freely.
+Use the **Session pooler** URI on hosts without IPv6 (Render, Railway, Vercel); the direct `db.<ref>.supabase.co` host is IPv6-only.
 
 ## Known limitations / next steps
 * No e-mails are sent (tickets are retrievable by PNR + e-mail). Add SMTP/Resend/SES in `src/bookings.js` after `pay()`.

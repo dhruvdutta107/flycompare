@@ -8,7 +8,7 @@ const flights = require('../src/flights');
 
 let server; let base; let app;
 before(async () => {
-  app = createApp({ db: open(':memory:') });
+  app = createApp({ db: await open(':memory:').ready() });
   server = app.listen(0);
   await new Promise((r) => server.once('listening', r));
   base = `http://127.0.0.1:${server.address().port}`;

@@ -12,6 +12,7 @@ const payments = require('./payments');
 const security = require('./security');
 const validate = require('./validate');
 const { makeService } = require('./bookings');
+const { isUniqueViolation } = require('./db');
 const tracking = require('./tracking');
 const transport = require('./transport');
 const assistant = require('./assistant');
@@ -26,15 +27,15 @@ function createApp({ db, publicDir = config.publicDir } = {}) {
   if (config.trustProxy) app.set('trust proxy', config.trustProxy);
   app.set('etag', 'strong');
 
+  const S = (sql) => ({ get: (...p) => db.get(sql, p), all: (...p) => db.all(sql, p), run: (...p) => db.run(sql, p) });
   const q = {
-    userByEmail: db.prepare('SELECT * FROM users WHERE email = ?'),
-    userById: db.prepare('SELECT id, name, email FROM users WHERE id = ?'),
-    insertUser: db.prepare('INSERT INTO users (name, email, password_hash) VALUES (?,?,?)'),
-    insertSession: db.prepare('INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?,?,?)'),
-    sessionUser: db.prepare('SELECT u.id, u.name, u.email FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = ? AND s.expires_at > ?'),
-    deleteSession: db.prepare('DELETE FROM sessions WHERE token_hash = ?'),
-    sweepSessions: db.prepare('DELETE FROM sessions WHERE expires_at < ?'),
-    insertTicket: db.prepare('INSERT INTO support_tickets (name, email, message, user_id) VALUES (?,?,?,?)'),
+    userByEmail: S('SELECT * FROM users WHERE lower(email) = lower($1)'),
+    insertUser: S('INSERT INTO users (name, email, password_hash) VALUES ($1,$2,$3) RETURNING id'),
+    insertSession: S('INSERT INTO sessions (token_hash, user_id, expires_at) VALUES ($1,$2,$3)'),
+    sessionUser: S('SELECT u.id, u.name, u.email FROM sessions s JOIN users u ON u.id = s.user_id WHERE s.token_hash = $1 AND s.expires_at > $2'),
+    deleteSession: S('DELETE FROM sessions WHERE token_hash = $1'),
+    sweepSessions: S('DELETE FROM sessions WHERE expires_at < $1'),
+    insertTicket: S('INSERT INTO support_tickets (name, email, message, user_id) VALUES ($1,$2,$3,$4) RETURNING id'),
   };
 
   // ---------- global middleware ----------
@@ -60,19 +61,19 @@ function createApp({ db, publicDir = config.publicDir } = {}) {
   api.use(security.csrfGuard);
 
   // session -> req.user
-  api.use((req, res, next) => {
+  api.use(asyncRoute(async (req, res, next) => {
     const raw = security.parseCookies(req.headers.cookie)[config.cookieName];
     req.user = null;
     if (raw && /^[A-Za-z0-9_-]{20,80}$/.test(raw)) {
       const hash = security.sha256(raw);
-      const u = q.sessionUser.get(hash, Date.now());
+      const u = await q.sessionUser.get(hash, Date.now());
       if (u) { req.user = u; req.sessionHash = hash; }
     }
     next();
-  });
+  }));
   const requireUser = (req, res, next) => (req.user ? next() : next(new HttpError(401, 'unauthorized', 'Please log in to continue.')));
 
-  api.get('/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
+  api.get('/health', asyncRoute(async (req, res) => { await db.get('SELECT 1 AS ok'); res.json({ ok: true, db: db.kind, time: new Date().toISOString() }); }));
 
   // ----- reference data -----
   api.get('/airports', (req, res) => res.json({ airports: airports.search(req.query.q, 8) }));
@@ -134,9 +135,9 @@ function createApp({ db, publicDir = config.publicDir } = {}) {
   // ----- auth -----
   const authLimiter = security.rateLimit({ windowMs: 10 * 60_000, max: 20, bucket: 'auth', message: 'Too many attempts. Please wait a few minutes and try again.' });
 
-  function startSession(req, res, userId) {
+  async function startSession(req, res, userId) {
     const token = security.newToken();
-    q.insertSession.run(security.sha256(token), userId, Date.now() + config.sessionDays * 86400000);
+    await q.insertSession.run(security.sha256(token), userId, Date.now() + config.sessionDays * 86400000);
     res.setHeader('Set-Cookie', security.sessionCookie(req, token, config.sessionDays * 86400));
   }
 
@@ -149,58 +150,59 @@ function createApp({ db, publicDir = config.publicDir } = {}) {
     if (!email) f.email = 'Enter a valid e-mail address.';
     if (password.length < 8 || password.length > 72 || !/[A-Za-z]/.test(password) || !/\d/.test(password)) f.password = 'Use 8-72 characters with at least one letter and one number.';
     if (Object.keys(f).length) throw new ValidationError(f);
-    if (q.userByEmail.get(email)) throw new ValidationError({ email: 'An account with this e-mail already exists. Try logging in.' });
-    const info = q.insertUser.run(name, email, await security.hashPassword(password));
-    const id = Number(info.lastInsertRowid);
-    startSession(req, res, id);
+    const taken = { email: 'An account with this e-mail already exists. Try logging in.' };
+    if (await q.userByEmail.get(email)) throw new ValidationError(taken);
+    let id;
+    try { id = Number((await q.insertUser.run(name, email, await security.hashPassword(password))).rows[0].id); } catch (e) { if (isUniqueViolation(e)) throw new ValidationError(taken); throw e; }
+    await startSession(req, res, id);
     res.status(201).json({ user: { id, name, email } });
   }));
 
   api.post('/auth/login', authLimiter, asyncRoute(async (req, res) => {
     const email = validate.email(req.body.email); const password = typeof req.body.password === 'string' ? req.body.password : '';
-    const user = email ? q.userByEmail.get(email) : null;
+    const user = email ? await q.userByEmail.get(email) : null;
     const ok = await security.verifyPassword(password.slice(0, 200), user ? user.password_hash : security.DUMMY_HASH);
     if (!user || !ok) throw new HttpError(401, 'invalid_credentials', 'Incorrect e-mail or password.');
-    startSession(req, res, user.id);
+    await startSession(req, res, user.id);
     res.json({ user: { id: user.id, name: user.name, email: user.email } });
   }));
 
-  api.post('/auth/logout', (req, res) => {
-    if (req.sessionHash) q.deleteSession.run(req.sessionHash);
+  api.post('/auth/logout', asyncRoute(async (req, res) => {
+    if (req.sessionHash) await q.deleteSession.run(req.sessionHash);
     res.setHeader('Set-Cookie', security.sessionCookie(req, '', 0));
     res.json({ ok: true });
-  });
+  }));
   api.get('/auth/me', (req, res) => res.json({ user: req.user }));
 
   // ----- bookings -----
   const payLimiter = security.rateLimit({ windowMs: 10 * 60_000, max: 25, bucket: 'pay', message: 'Too many payment attempts. Please wait a few minutes.' });
-  api.post('/bookings', (req, res) => {
+  api.post('/bookings', asyncRoute(async (req, res) => {
     const b = req.body || {};
-    res.status(201).json({ booking: bookings.createHold({ tripType: b.tripType, flightIds: b.flightIds, adults: b.adults, children: b.children, infants: b.infants, cabin: b.cabin }, req.user?.id) });
-  });
-  api.post('/bookings/lookup', security.rateLimit({ windowMs: 10 * 60_000, max: 15, bucket: 'lookup' }), (req, res) => {
-    res.json({ booking: bookings.lookup(req.body.pnr, req.body.email) });
-  });
-  api.get('/me/bookings', requireUser, (req, res) => res.json({ bookings: bookings.listForUser(req.user.id) }));
-  api.get('/bookings/:token', (req, res) => res.json({ booking: bookings.get(req.params.token) }));
-  api.put('/bookings/:token/passengers', (req, res) => res.json({ booking: bookings.setPassengers(req.params.token, req.body || {}, req.user?.id) }));
-  api.post('/bookings/:token/promo', (req, res) => {
-    const out = bookings.setPromo(req.params.token, req.body?.code);
+    res.status(201).json({ booking: await bookings.createHold({ tripType: b.tripType, flightIds: b.flightIds, adults: b.adults, children: b.children, infants: b.infants, cabin: b.cabin }, req.user?.id) });
+  }));
+  api.post('/bookings/lookup', security.rateLimit({ windowMs: 10 * 60_000, max: 15, bucket: 'lookup' }), asyncRoute(async (req, res) => {
+    res.json({ booking: await bookings.lookup(req.body.pnr, req.body.email) });
+  }));
+  api.get('/me/bookings', requireUser, asyncRoute(async (req, res) => res.json({ bookings: await bookings.listForUser(req.user.id) })));
+  api.get('/bookings/:token', asyncRoute(async (req, res) => res.json({ booking: await bookings.get(req.params.token) })));
+  api.put('/bookings/:token/passengers', asyncRoute(async (req, res) => res.json({ booking: await bookings.setPassengers(req.params.token, req.body || {}, req.user?.id) })));
+  api.post('/bookings/:token/promo', asyncRoute(async (req, res) => {
+    const out = await bookings.setPromo(req.params.token, req.body?.code);
     const { promoMessage, ...booking } = out;
     res.json({ booking, message: promoMessage });
-  });
-  api.post('/bookings/:token/pay', payLimiter, (req, res) => res.json({ booking: bookings.pay(req.params.token, req.body || {}, req.user?.id) }));
-  api.post('/bookings/:token/cancel', (req, res) => res.json({ booking: bookings.cancel(req.params.token) }));
+  }));
+  api.post('/bookings/:token/pay', payLimiter, asyncRoute(async (req, res) => res.json({ booking: await bookings.pay(req.params.token, req.body || {}, req.user?.id) })));
+  api.post('/bookings/:token/cancel', asyncRoute(async (req, res) => res.json({ booking: await bookings.cancel(req.params.token) })));
   // ----- trip reminders + calendar -----
-  api.get('/bookings/:token/reminders', (req, res) => res.json({ reminders: bookings.listReminders(req.params.token) }));
-  api.post('/bookings/:token/reminders', security.rateLimit({ windowMs: 60_000, max: 30, bucket: 'rem' }), (req, res) => res.status(201).json({ reminders: bookings.addReminder(req.params.token, req.body || {}) }));
-  api.delete('/bookings/:token/reminders/:id', (req, res) => res.json({ reminders: bookings.deleteReminder(req.params.token, req.params.id) }));
-  api.get('/bookings/:token/calendar.ics', (req, res) => {
-    const ics = bookings.calendar(req.params.token);
+  api.get('/bookings/:token/reminders', asyncRoute(async (req, res) => res.json({ reminders: await bookings.listReminders(req.params.token) })));
+  api.post('/bookings/:token/reminders', security.rateLimit({ windowMs: 60_000, max: 30, bucket: 'rem' }), asyncRoute(async (req, res) => res.status(201).json({ reminders: await bookings.addReminder(req.params.token, req.body || {}) })));
+  api.delete('/bookings/:token/reminders/:id', asyncRoute(async (req, res) => res.json({ reminders: await bookings.deleteReminder(req.params.token, req.params.id) })));
+  api.get('/bookings/:token/calendar.ics', asyncRoute(async (req, res) => {
+    const ics = await bookings.calendar(req.params.token);
     res.setHeader('Content-Disposition', `attachment; filename="${ics.filename}"`);
     res.type('text/calendar; charset=utf-8').send(ics.body);
-  });
-  api.get('/me/reminders', requireUser, (req, res) => res.json({ reminders: bookings.remindersForUser(req.user.id) }));
+  }));
+  api.get('/me/reminders', requireUser, asyncRoute(async (req, res) => res.json({ reminders: await bookings.remindersForUser(req.user.id) })));
 
   api.get('/payment-banks', (req, res) => res.json({ banks: payments.BANKS }));
 
@@ -243,16 +245,16 @@ function createApp({ db, publicDir = config.publicDir } = {}) {
   api.get('/assistant/info', (req, res) => res.json({ ai: !!config.anthropicKey }));
 
   // ----- support -----
-  api.post('/support', security.rateLimit({ windowMs: 10 * 60_000, max: 6, bucket: 'support' }), (req, res) => {
+  api.post('/support', security.rateLimit({ windowMs: 10 * 60_000, max: 6, bucket: 'support' }), asyncRoute(async (req, res) => {
     const f = {};
     const name = validate.str(req.body.name, 80); const email = validate.email(req.body.email); const message = validate.str(req.body.message, 2000);
     if (name.length < 2) f.name = 'Please enter your name.';
     if (!email) f.email = 'Enter a valid e-mail address.';
     if (message.length < 10) f.message = 'Please tell us a little more (at least 10 characters).';
     if (Object.keys(f).length) throw new ValidationError(f);
-    const info = q.insertTicket.run(name, email, message, req.user?.id ?? null);
-    res.status(201).json({ ticket: `FC-${String(info.lastInsertRowid).padStart(5, '0')}` });
-  });
+    const info = await q.insertTicket.run(name, email, message, req.user?.id ?? null);
+    res.status(201).json({ ticket: `FC-${String(info.rows[0].id).padStart(5, '0')}` });
+  }));
 
   api.use((req, res) => res.status(404).json({ error: 'not_found', message: 'No such API endpoint.' }));
   api.use((err, req, res, next) => { // eslint-disable-line no-unused-vars
@@ -280,7 +282,7 @@ function createApp({ db, publicDir = config.publicDir } = {}) {
   });
 
   // housekeeping: expire stale fare holds and old sessions
-  const timer = setInterval(() => { try { bookings.sweep(); q.sweepSessions.run(Date.now()); } catch (e) { console.error(e); } }, 5 * 60_000);
+  const timer = setInterval(() => { Promise.all([bookings.sweep(), q.sweepSessions.run(Date.now())]).catch((e) => console.error('[sweep]', e.message)); }, 5 * 60_000);
   timer.unref();
   app.locals.close = () => clearInterval(timer);
   return app;

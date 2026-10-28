@@ -11,11 +11,13 @@
     "build": "node scripts/build.js",
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "test": "node --test --test-reporter=spec \"tests/*.test.js\""
+    "test": "node --test --test-reporter=spec \"tests/*.test.js\"",
+    "db:check": "node -e \"require('./src/db').open().ready().then(async (db) => { console.log('Connected to', db.kind, await db.get('select 1 as ok')); await db.close(); }).catch((e) => { console.error(e.message); process.exit(1); })\""
   },
   "dependencies": {
     "compression": "^1.8.2",
-    "express": "^5.3.0"
+    "express": "^5.3.0",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@fontsource/plus-jakarta-sans": "^5.3.0",

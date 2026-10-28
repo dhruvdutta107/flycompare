@@ -1,18 +1,17 @@
 # One-click deploy on Render: New + > Blueprint > pick this repo.
+# Data lives in Supabase, so no persistent disk is needed and the free plan works.
 services:
   - type: web
     name: flycompare
     runtime: docker
-    plan: starter            # a persistent disk needs a paid instance; the free plan works but data resets on redeploy
+    plan: free
     healthCheckPath: /healthz
     envVars:
       - key: NODE_ENV
         value: production
       - key: TRUST_PROXY
         value: "1"
-      - key: DATABASE_PATH
-        value: /data/flycompare.db
-    disk:
-      name: flycompare-data
-      mountPath: /data
-      sizeGB: 1
+      - key: DATABASE_URL        # Supabase > Connect > Session pooler connection string (with your DB password)
+        sync: false
+      - key: ANTHROPIC_API_KEY   # optional: AI replies in the support chat
+        sync: false

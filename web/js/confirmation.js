@@ -67,7 +67,7 @@
   // ---------- celebration (only right after paying) ----------
   function celebrate() {
     if (celebrated || !FC.motion || !booking.confirmedAt) return; celebrated = true;
-    var at = Date.parse(String(booking.confirmedAt).replace(' ', 'T') + 'Z');
+    var c = String(booking.confirmedAt); var at = Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(c) ? c : c.replace(' ', 'T') + 'Z');
     if (!(Date.now() - at < 3 * 60000)) return;
     var colors = ['#00677f', '#4cd6ff', '#ffba49', '#10b981', '#0074b6', '#f472b6'];
     for (var i = 0; i < 70; i++) {

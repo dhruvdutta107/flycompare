@@ -1,12 +1,21 @@
 'use strict';
 const path = require('node:path');
 
+// Load a local .env file if there is one (Node >= 21.7). Real environment variables always win.
+try { if (typeof process.loadEnvFile === 'function') process.loadEnvFile(path.join(__dirname, '..', '.env')); } catch { /* no .env */ }
 const env = process.env;
 const isProd = env.NODE_ENV === 'production';
 
 module.exports = {
   isProd,
   port: Number(env.PORT) || 3000,
+  // Supabase / PostgreSQL connection string (Supabase dashboard -> Connect -> Session pooler). When set, it is used
+  // instead of SQLite. Leave unset for local development / tests (SQLite, no setup).
+  databaseUrl: env.DATABASE_URL || '',
+  dbSsl: env.DATABASE_SSL === 'false' ? false : true,
+  dbCaCert: env.DATABASE_CA_CERT || '',        // optional path to Supabase's CA certificate to verify the server
+  dbPoolSize: Number(env.DATABASE_POOL_SIZE) || 5,
+  dbAutoMigrate: env.DATABASE_AUTO_MIGRATE !== 'false', // run supabase/schema.sql (idempotent) on start-up
   // Where the SQLite file lives. On Render/Railway/Fly mount a persistent disk and point this at it.
   dbPath: env.DATABASE_PATH || path.join(__dirname, '..', 'data', 'flycompare.db'),
   publicDir: path.join(__dirname, '..', 'public'),
