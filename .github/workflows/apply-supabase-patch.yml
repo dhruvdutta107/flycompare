@@ -1,0 +1,43 @@
+name: Apply Supabase-ready FlyCompare source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/apply-supabase-patch.yml"
+      - "archive.part*"
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Extract current source patch
+        run: |
+          cat archive.part* | base64 -d > flycompare-supabase-patch.tar.gz
+          tar -xzf flycompare-supabase-patch.tar.gz -C .
+          rm -f archive.part* flycompare-supabase-patch.tar.gz
+
+      - name: Refresh dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build application assets
+        run: npm run build
+
+      - name: Commit updated application source
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Apply Supabase-ready FlyCompare source [skip extract]" || echo "No source changes to commit"
+          git push
