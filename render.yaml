@@ -1,0 +1,18 @@
+# One-click deploy on Render: New + > Blueprint > pick this repo.
+services:
+  - type: web
+    name: flycompare
+    runtime: docker
+    plan: starter            # a persistent disk needs a paid instance; the free plan works but data resets on redeploy
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATABASE_PATH
+        value: /data/flycompare.db
+    disk:
+      name: flycompare-data
+      mountPath: /data
+      sizeGB: 1
