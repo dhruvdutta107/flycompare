@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /booking.html
+Disallow: /payment.html
+Disallow: /confirmation.html

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Payment - FlyCompare</title>
+<meta name="description" content="FlyCompare - compare fares across airlines and book with confidence."/>
+<meta name="theme-color" content="#00677f"/>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"/>
+<link rel="preload" href="/assets/fonts/material.d0893432b3.woff2" as="font" type="font/woff2" crossorigin/>
+<link rel="preload" href="/assets/fonts/sora-700.84aa810eb9.woff2" as="font" type="font/woff2" crossorigin/>
+<link rel="preload" href="/assets/fonts/jakarta-400.84c5d793e5.woff2" as="font" type="font/woff2" crossorigin/>
+<link rel="stylesheet" href="/assets/app.ccc2d22a29.css"/>
+<script src="/assets/js/theme.4d58b5f958.js"></script>
+</head>
+<body class="bg-surface-container-lowest text-on-background font-body-md min-h-screen flex flex-col antialiased transition-colors duration-300 dark:bg-slate-900 dark:text-slate-100" data-nav="" data-page="payment">
+<a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">Skip to main content</a>
+<div id="toast-container" class="fixed top-20 right-4 z-[100] flex flex-col gap-2 pointer-events-none" role="status" aria-live="polite" aria-atomic="false"></div>
+
+<div id="auth-modal" class="fixed inset-0 z-[90] hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close-modal="auth-modal"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto bg-surface-container-lowest dark:bg-slate-800 rounded-2xl shadow-2xl p-8 border border-surface-variant dark:border-slate-700 fade-in">
+    <div class="flex justify-between items-center mb-6">
+      <h2 id="auth-title" class="font-headline-md text-headline-md font-bold">Welcome back</h2>
+      <button type="button" data-close-modal="auth-modal" class="text-on-surface-variant dark:text-slate-300 hover:text-on-background" aria-label="Close"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+    </div>
+
+    <form id="login-form" class="space-y-4" novalidate data-auth-form="login">
+      <div>
+        <label for="login-email" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Email</label>
+        <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="email" hidden></p>
+      </div>
+      <div>
+        <label for="login-password" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Password</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Your password" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="password" hidden></p>
+      </div>
+      <p class="field-msg" data-msg="_form" hidden></p>
+      <button type="submit" class="w-full bg-primary text-on-primary font-bold py-3 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-60">Login</button>
+      <p class="text-center text-sm text-on-surface-variant dark:text-slate-300 mt-4">Don't have an account? <button type="button" data-auth-switch="register" class="text-primary dark:text-sky-300 font-semibold hover:underline">Sign up</button></p>
+    </form>
+
+    <form id="register-form" class="space-y-4 hidden" novalidate data-auth-form="register">
+      <div>
+        <label for="reg-name" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Full name</label>
+        <input id="reg-name" name="name" type="text" autocomplete="name" placeholder="Your name" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="name" hidden></p>
+      </div>
+      <div>
+        <label for="reg-email" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Email</label>
+        <input id="reg-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="email" hidden></p>
+      </div>
+      <div>
+        <label for="reg-password" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Password</label>
+        <input id="reg-password" name="password" type="password" autocomplete="new-password" placeholder="8+ characters, with a number" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="password" hidden></p>
+      </div>
+      <p class="field-msg" data-msg="_form" hidden></p>
+      <button type="submit" class="w-full bg-primary text-on-primary font-bold py-3 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-60">Create account</button>
+      <p class="text-center text-sm text-on-surface-variant dark:text-slate-300 mt-4">Already registered? <button type="button" data-auth-switch="login" class="text-primary dark:text-sky-300 font-semibold hover:underline">Log in</button></p>
+    </form>
+  </div>
+</div>
+
+<div id="mobile-menu" class="fixed inset-0 z-[80] hidden" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-toggle-menu></div>
+  <div class="absolute right-0 top-0 h-full w-72 bg-surface-container-lowest dark:bg-slate-900 shadow-2xl slide-in-right p-6 flex flex-col gap-6">
+    <div class="flex justify-between items-center">
+      <span class="font-headline-md font-bold text-headline-md">Menu</span>
+      <button type="button" data-toggle-menu class="text-on-surface-variant dark:text-slate-300 hover:text-on-background" aria-label="Close menu"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+    </div>
+    <nav class="flex flex-col gap-4 font-label-md text-label-md" aria-label="Mobile">
+      <a data-nav-link="flights" href="/" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Flights</a>
+      <a data-nav-link="track" href="/track.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Track Flight</a>
+      <a data-nav-link="transfers" href="/transfers.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Cab &amp; Bus from Airport</a>
+      <a data-nav-link="offers" href="/offers.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Offers</a>
+      <a data-nav-link="trips" href="/trips.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">My Trips</a>
+      <a data-nav-link="help" href="/help.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Help</a>
+    </nav>
+    <div class="mt-auto pt-6 border-t border-surface-variant dark:border-slate-700" id="mobile-auth-area">
+      <button type="button" data-open-auth="login" class="w-full bg-primary text-on-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2"><span class="material-symbols-outlined text-sm" aria-hidden="true">person</span> Login / Sign Up</button>
+    </div>
+  </div>
+</div>
+
+<header class="bg-surface-container-lowest/90 dark:bg-slate-900/90 text-on-background dark:text-slate-100 border-b border-surface-variant dark:border-slate-700 z-50 sticky top-0 backdrop-blur-md transition-colors">
+  <div class="flex justify-between items-center h-16 px-gutter w-full max-w-container-max mx-auto">
+    <a href="/" class="flex items-center gap-xs group" aria-label="FlyCompare home">
+      <div class="bg-primary text-on-primary p-1 rounded transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110"><span class="material-symbols-outlined icon-fill text-[20px]" aria-hidden="true">change_history</span></div>
+      <span class="text-headline-md font-headline-md font-bold tracking-tight">FlyCompare</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-md" aria-label="Main">
+      <a data-nav-link="flights" class="nav-link font-label-md text-label-md font-semibold transition-colors text-on-surface-variant dark:text-slate-300 hover:text-primary py-[18px] border-b-2 border-transparent" href="/">Flights</a>
+      <a data-nav-link="track" class="nav-link font-label-md text-label-md font-semibold transition-colors text-on-surface-variant dark:text-slate-300 hover:text-primary py-[18px] border-b-2 border-transparent flex items-center gap-1.5" href="/track.html"><span class="live-dot text-emerald-500 !w-1.5 !h-1.5" aria-hidden="true"></span>Track Flight</a>
+      <a data-nav-link="transfers" class="nav-link font-label-md text-label-md font-semibold transition-colors text-on-surface-variant dark:text-slate-300 hover:text-primary py-[18px] border-b-2 border-transparent" href="/transfers.html">Cab &amp; Bus</a>
+      <a data-nav-link="offers" class="nav-link font-label-md text-label-md font-semibold transition-colors text-on-surface-variant dark:text-slate-300 hover:text-primary py-[18px] border-b-2 border-transparent" href="/offers.html">Offers</a>
+      <a data-nav-link="trips" class="nav-link font-label-md text-label-md font-semibold transition-colors text-on-surface-variant dark:text-slate-300 hover:text-primary py-[18px] border-b-2 border-transparent" href="/trips.html">My Trips</a>
+      <a data-nav-link="help" class="nav-link font-label-md text-label-md font-semibold transition-colors text-on-surface-variant dark:text-slate-300 hover:text-primary py-[18px] border-b-2 border-transparent" href="/help.html">Help</a>
+    </nav>
+    <div class="flex items-center gap-md">
+      <button type="button" data-toggle-theme class="flex items-center justify-center w-9 h-9 rounded-full hover:bg-surface-container-low dark:hover:bg-slate-800 transition-colors text-on-surface-variant dark:text-slate-300" aria-label="Toggle dark mode" title="Toggle dark mode">
+        <span class="material-symbols-outlined text-[18px] transition-transform duration-500" data-theme-icon aria-hidden="true">dark_mode</span>
+      </button>
+      <div id="auth-area" class="hidden sm:block">
+        <button type="button" data-open-auth="login" class="flex items-center gap-xs font-label-md text-label-md text-primary dark:text-sky-300 border border-primary dark:border-sky-300 rounded-full px-4 py-2 hover:bg-primary/5 transition-colors">
+          <span class="material-symbols-outlined text-[16px]" aria-hidden="true">person</span><span>Login / Sign Up</span>
+        </button>
+      </div>
+      <button type="button" data-toggle-menu class="md:hidden text-on-surface-variant dark:text-slate-300 p-2 hover:bg-surface-container-low dark:hover:bg-slate-800 rounded-lg transition-colors" aria-label="Open menu" aria-controls="mobile-menu" aria-expanded="false">
+        <span class="material-symbols-outlined" aria-hidden="true">menu</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="flex-grow w-full pb-xl" id="main-content">
+  <section class="max-w-container-max mx-auto px-gutter pt-8">
+    <div id="stepper" data-step="3" class="min-h-[28px]"></div>
+    <div id="state-msg" class="hidden text-center py-20"></div>
+    <div id="payment-wrap" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+      <div class="lg:col-span-2 space-y-4">
+        <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-300 dark:border-amber-700 rounded-xl p-4 text-sm flex gap-3">
+          <span class="material-symbols-outlined text-amber-700 dark:text-amber-300" aria-hidden="true">science</span>
+          <div><p class="font-bold">Demo payment &mdash; no real money is charged</p>
+          <p class="text-on-surface-variant dark:text-slate-300">Use test card <button type="button" id="fill-test" class="font-mono font-bold underline">4111 1111 1111 1111</button> (any future expiry, any 3-digit CVV). A card ending <span class="font-mono">0002</span> is declined, so you can see the error flow. UPI ids containing &ldquo;fail&rdquo; are declined.</p></div>
+        </div>
+        <div class="bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-6 shadow-sm">
+          <div class="flex justify-between items-center mb-2"><h1 class="font-headline-md text-headline-md font-bold">Payment</h1>
+            <span class="flex items-center gap-1 text-xs text-emerald-700 dark:text-emerald-300 font-semibold"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">lock</span> Encrypted connection</span></div>
+          <p class="text-sm text-on-surface-variant dark:text-slate-300 mb-4">Choose how you'd like to pay. Card numbers and CVVs are never stored &mdash; we keep only the card type and last 4 digits.</p>
+
+          <div id="pay-error" role="alert" class="hidden mb-4 bg-red-50 dark:bg-red-950/30 border border-red-300 dark:border-red-800 text-red-800 dark:text-red-200 rounded-lg p-3 text-sm flex gap-2"><span class="material-symbols-outlined" aria-hidden="true">error</span><span id="pay-error-text"></span></div>
+
+          <div id="pay-method-tabs" role="tablist" aria-label="Payment method" class="grid grid-cols-3 gap-3 mb-6">
+            <button type="button" role="tab" data-m="card" id="tab-card" aria-controls="pay-card" class="pay-tab border-2 rounded-lg p-3 flex flex-col items-center gap-1"><span class="material-symbols-outlined" aria-hidden="true">credit_card</span><span class="text-sm font-semibold">Card</span></button>
+            <button type="button" role="tab" data-m="upi" id="tab-upi" aria-controls="pay-upi" class="pay-tab border-2 rounded-lg p-3 flex flex-col items-center gap-1"><span class="material-symbols-outlined" aria-hidden="true">qr_code_2</span><span class="text-sm font-semibold">UPI</span></button>
+            <button type="button" role="tab" data-m="netbanking" id="tab-netbanking" aria-controls="pay-netbanking" class="pay-tab border-2 rounded-lg p-3 flex flex-col items-center gap-1"><span class="material-symbols-outlined" aria-hidden="true">account_balance</span><span class="text-sm font-semibold">Net Banking</span></button>
+          </div>
+
+          <form id="payment-form" novalidate>
+            <div id="pay-card" role="tabpanel" aria-labelledby="tab-card" class="pay-panel space-y-4">
+              <div><label for="cardNumber" class="block text-sm font-semibold mb-1">Card number</label>
+                <div class="relative"><input id="cardNumber" name="cardNumber" inputmode="numeric" autocomplete="cc-number" placeholder="1234 5678 9012 3456" maxlength="23" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 pr-20 bg-transparent focus:border-primary font-mono tracking-wider"/><span id="card-brand" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-primary dark:text-sky-300"></span></div>
+                <p class="field-msg" data-msg="cardNumber" hidden></p></div>
+              <div class="grid grid-cols-2 gap-4">
+                <div><label for="expiry" class="block text-sm font-semibold mb-1">Expiry</label><input id="expiry" name="expiry" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY" maxlength="5" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 bg-transparent focus:border-primary font-mono"/><p class="field-msg" data-msg="expiry" hidden></p></div>
+                <div><label for="cvv" class="block text-sm font-semibold mb-1">CVV</label><input id="cvv" name="cvv" type="password" inputmode="numeric" autocomplete="cc-csc" placeholder="•••" maxlength="4" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 bg-transparent focus:border-primary font-mono"/><p class="field-msg" data-msg="cvv" hidden></p></div>
+              </div>
+              <div><label for="cardName" class="block text-sm font-semibold mb-1">Name on card</label><input id="cardName" name="cardName" autocomplete="cc-name" placeholder="As printed on card" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 bg-transparent focus:border-primary"/><p class="field-msg" data-msg="cardName" hidden></p></div>
+            </div>
+            <div id="pay-upi" role="tabpanel" aria-labelledby="tab-upi" class="pay-panel hidden space-y-2">
+              <label for="upiId" class="block text-sm font-semibold mb-1">UPI ID</label><input id="upiId" name="upiId" autocomplete="off" placeholder="yourname@okbank" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 bg-transparent focus:border-primary"/><p class="field-msg" data-msg="upiId" hidden></p>
+            </div>
+            <div id="pay-netbanking" role="tabpanel" aria-labelledby="tab-netbanking" class="pay-panel hidden space-y-2">
+              <label for="bank" class="block text-sm font-semibold mb-1">Select your bank</label><select id="bank" name="bank" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 bg-transparent focus:border-primary"><option value="">Choose a bank</option></select><p class="field-msg" data-msg="bank" hidden></p>
+            </div>
+
+            <div class="flex flex-wrap gap-4 text-xs text-on-surface-variant dark:text-slate-300 mt-6">
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">shield</span> Server-side validation</span>
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">verified</span> Price locked at checkout</span>
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">replay</span> Cancel anytime from My Trips</span>
+            </div>
+            <div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 mt-6">
+              <a id="back-link" href="/" class="flex items-center gap-1 text-on-surface-variant dark:text-slate-300 hover:text-primary font-semibold"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Back to passenger details</a>
+              <button type="submit" id="pay-btn" class="w-full sm:w-auto bg-primary text-on-primary font-bold px-8 py-3 rounded-lg hover:bg-primary/90 disabled:opacity-60 flex items-center justify-center gap-2"><span id="pay-btn-text">Pay &amp; Confirm Booking</span><span id="pay-btn-loader" class="material-symbols-outlined animate-spin hidden" aria-hidden="true">progress_activity</span></button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <aside class="lg:col-span-1" aria-label="Fare summary">
+        <div class="bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-6 shadow-sm lg:sticky lg:top-20">
+          <h2 class="font-headline-md text-headline-md font-bold mb-4">Fare Summary</h2>
+          <div id="fare-summary" class="space-y-2 text-sm"></div>
+          <div class="mt-5 pt-4 border-t border-surface-variant dark:border-slate-700">
+            <label for="promo-input" class="block text-sm font-semibold mb-1">Promo code</label>
+            <div class="flex gap-2"><input id="promo-input" autocomplete="off" autocapitalize="characters" placeholder="e.g. SUMMER40" class="flex-1 min-w-0 border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2 bg-transparent uppercase focus:border-primary"/><button type="button" id="promo-btn" class="px-4 py-2 rounded-lg border border-primary text-primary dark:text-sky-300 dark:border-sky-300 font-bold hover:bg-primary/5">Apply</button></div>
+            <p class="field-msg" data-msg="promo" hidden></p><p id="promo-ok" class="text-sm text-emerald-700 dark:text-emerald-300 mt-1 hidden"></p>
+          </div>
+          <div class="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg px-3 py-2 mt-4"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">lock_clock</span><span>Fare locked for <strong id="hold-timer">--:--</strong></span></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<footer class="bg-[#0f172a] text-white border-t border-white/10 mt-auto">
+  <div class="flex flex-col gap-lg py-xl px-gutter w-full max-w-container-max mx-auto">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-lg">
+      <div class="flex flex-col gap-sm">
+        <div class="flex items-center gap-sm">
+          <div class="bg-primary text-white p-1 rounded"><span class="material-symbols-outlined icon-fill" aria-hidden="true">change_history</span></div>
+          <span class="text-headline-md font-headline-md font-bold text-white">FlyCompare</span>
+        </div>
+        <p class="font-body-md text-sm text-slate-300 max-w-sm">A single place to compare fares, book, and manage your trip &mdash; combining the simplicity of Skyscanner search with IRCTC Air&rsquo;s trusted booking.</p>
+      </div>
+      <nav class="flex flex-wrap gap-md font-label-md text-sm" aria-label="Footer">
+        <a href="/help.html#about" class="text-slate-300 hover:text-white transition-colors">About</a>
+        <a href="/help.html#terms" class="text-slate-300 hover:text-white transition-colors">Terms</a>
+        <a href="/help.html#privacy" class="text-slate-300 hover:text-white transition-colors">Privacy</a>
+        <a href="/help.html" class="text-slate-300 hover:text-white transition-colors">Help</a>
+        <a href="/trips.html" class="text-slate-300 hover:text-white transition-colors">Manage booking</a>
+        <a href="/track.html" class="text-slate-300 hover:text-white transition-colors">Flight status</a>
+        <a href="/transfers.html" class="text-slate-300 hover:text-white transition-colors">Airport transfers</a>
+        <a href="/help.html#contact" class="text-slate-300 hover:text-white transition-colors">Customer Support</a>
+      </nav>
+    </div>
+    <p class="text-xs text-slate-400 pt-4 border-t border-white/10">&copy; 2026 FlyCompare. Student project &mdash; fares are simulated sample data and no real payments are processed or flights booked.</p>
+  </div>
+</footer>
+
+<div id="chat-root" class="no-print">
+  <button type="button" id="chat-fab" aria-haspopup="dialog" aria-expanded="false" aria-controls="chat-panel"
+    class="fixed right-5 z-[70] flex items-center gap-2 h-14 pl-4 pr-5 rounded-full bg-primary text-white shadow-xl shadow-primary/30 hover:shadow-2xl hover:bg-[#005a6f] focus-visible:ring-4 focus-visible:ring-sky-300">
+    <span class="material-symbols-outlined icon-fill" aria-hidden="true" data-fab-icon>support_agent</span>
+    <span class="font-bold text-sm hidden sm:inline" data-fab-label>Need help?</span>
+    <span id="chat-unread" hidden class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-[11px] font-bold flex items-center justify-center ring-2 ring-white dark:ring-slate-900">1</span>
+  </button>
+
+  <section id="chat-panel" role="dialog" aria-modal="false" aria-labelledby="chat-title" hidden
+    class="fixed z-[75] inset-x-2 bottom-2 top-16 sm:inset-auto sm:right-5 sm:bottom-24 sm:w-[390px] sm:h-[min(600px,calc(100vh-8rem))] flex flex-col overflow-hidden rounded-2xl border border-surface-variant dark:border-slate-700 bg-surface-container-lowest dark:bg-slate-900 shadow-2xl">
+    <header class="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-primary to-brand text-white">
+      <span class="relative flex items-center justify-center w-10 h-10 rounded-full bg-white/15" aria-hidden="true">
+        <span class="material-symbols-outlined icon-fill">support_agent</span>
+        <span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-emerald-400 ring-2 ring-primary"></span>
+      </span>
+      <div class="min-w-0 flex-1">
+        <h2 id="chat-title" class="font-bold leading-tight">FlyCompare Assistant</h2>
+        <p class="text-xs text-white/80" id="chat-sub">Online &middot; replies in seconds</p>
+      </div>
+      <button type="button" id="chat-reset" class="p-2 rounded-full hover:bg-white/15" aria-label="Start a new conversation" title="New conversation"><span class="material-symbols-outlined text-[20px]" aria-hidden="true">restart_alt</span></button>
+      <button type="button" id="chat-close" class="p-2 rounded-full hover:bg-white/15" aria-label="Close chat" title="Close (Esc)"><span class="material-symbols-outlined text-[20px]" aria-hidden="true">close</span></button>
+    </header>
+    <div id="chat-log" role="log" aria-live="polite" aria-relevant="additions" class="flex-1 overflow-y-auto custom-scrollbar px-4 py-4 space-y-3 bg-surface-container-low/60 dark:bg-slate-900"></div>
+    <div id="chat-suggest" class="flex gap-2 overflow-x-auto custom-scrollbar px-3 pt-2 pb-1 bg-surface-container-lowest dark:bg-slate-900" aria-label="Suggested questions"></div>
+    <form id="chat-form" class="flex items-end gap-2 p-3 border-t border-surface-variant dark:border-slate-700 bg-surface-container-lowest dark:bg-slate-900" novalidate>
+      <label for="chat-input" class="sr-only">Type your message</label>
+      <textarea id="chat-input" rows="1" maxlength="800" placeholder="Ask about a flight, refund, cab..." class="flex-1 resize-none max-h-28 rounded-xl border border-surface-variant dark:border-slate-600 bg-transparent px-3 py-2.5 text-sm focus:border-primary focus:ring-2 focus:ring-primary/20"></textarea>
+      <button type="submit" id="chat-send" disabled class="shrink-0 w-11 h-11 rounded-xl bg-primary text-white flex items-center justify-center disabled:opacity-40 hover:bg-[#005a6f]" aria-label="Send message"><span class="material-symbols-outlined icon-fill text-[20px]" aria-hidden="true">send</span></button>
+    </form>
+    <p class="px-3 pb-2 -mt-1 text-[10px] text-on-surface-variant dark:text-slate-500 bg-surface-container-lowest dark:bg-slate-900">Demo assistant &middot; never share card numbers or passwords in chat.</p>
+  </section>
+</div>
+
+<script src="/assets/js/common.047ff2fbc1.js" defer></script>
+<script src="/assets/js/payment.c5923ab65c.js" defer></script>
+<script src="/assets/js/chat.3bb2a45ace.js" defer></script>
+</body>
+</html>

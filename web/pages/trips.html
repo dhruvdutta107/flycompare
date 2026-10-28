@@ -1,0 +1,31 @@
+<!--meta {"title":"My Trips - FlyCompare","description":"View, print or cancel your FlyCompare bookings.","nav":"trips","scripts":["trips"],"noindex":true} -->
+<main class="flex-grow w-full pb-xl" id="main-content">
+  <section class="max-w-4xl mx-auto px-gutter pt-10">
+    <h1 class="font-headline-lg text-headline-lg mb-1">My Trips</h1>
+    <p class="text-on-surface-variant dark:text-slate-300 mb-6">Log in to see all your bookings, or look up a single booking with its PNR and e-mail.</p>
+    <div role="tablist" aria-label="Trips" class="flex gap-2 border-b border-surface-variant dark:border-slate-700 mb-6">
+      <button type="button" role="tab" id="tab-mine" data-tab="mine" aria-controls="panel-mine" class="trip-tab-btn px-4 py-2 font-semibold border-b-2 -mb-px">My bookings</button>
+      <button type="button" role="tab" id="tab-find" data-tab="find" aria-controls="panel-find" class="trip-tab-btn px-4 py-2 font-semibold border-b-2 -mb-px">Find a booking</button>
+    </div>
+
+    <div id="panel-mine" role="tabpanel" aria-labelledby="tab-mine">
+      <div id="mine-login" class="hidden text-center py-14 bg-surface-container-low dark:bg-slate-800 rounded-xl">
+        <span class="material-symbols-outlined text-[48px] text-on-surface-variant" aria-hidden="true">luggage</span>
+        <p class="font-bold text-lg mt-2">Log in to see your trips</p><p class="text-on-surface-variant dark:text-slate-300 mb-4">Bookings you make while logged in are saved to your account.</p>
+        <button type="button" data-open-auth="login" class="bg-primary text-on-primary font-bold px-6 py-3 rounded-lg">Login / Sign Up</button>
+      </div>
+      <div id="mine-list" class="space-y-4" aria-live="polite"></div>
+    </div>
+
+    <div id="panel-find" role="tabpanel" aria-labelledby="tab-find" class="hidden">
+      <form id="find-form" novalidate class="bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-6 max-w-lg">
+        <div class="space-y-4">
+          <div><label for="find-pnr" class="block text-sm font-semibold mb-1">Booking reference (PNR)</label><input id="find-pnr" name="pnr" autocomplete="off" autocapitalize="characters" maxlength="6" placeholder="6 characters, e.g. K7M2QX" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 bg-transparent uppercase font-mono tracking-widest focus:border-primary"/><p class="field-msg" data-msg="pnr" hidden></p></div>
+          <div><label for="find-email" class="block text-sm font-semibold mb-1">Contact e-mail</label><input id="find-email" name="email" type="email" autocomplete="email" placeholder="The e-mail used when booking" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 bg-transparent focus:border-primary"/><p class="field-msg" data-msg="email" hidden></p></div>
+          <p class="field-msg" data-msg="_form" hidden></p>
+          <button type="submit" class="w-full bg-primary text-on-primary font-bold py-3 rounded-lg hover:bg-primary/90 disabled:opacity-60">Find booking</button>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>

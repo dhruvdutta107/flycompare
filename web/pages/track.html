@@ -1,0 +1,54 @@
+<!--meta {"title":"Live Flight Tracker - FlyCompare","description":"Track any FlyCompare flight live: departure gate, delays, position, altitude and arrival time.","nav":"track","scripts":["track"]} -->
+<main class="flex-grow w-full pb-xl" id="main-content">
+  <section class="relative overflow-hidden bg-gradient-to-b from-sky-50 to-white dark:from-slate-900 dark:to-slate-900 border-b border-surface-variant dark:border-slate-800">
+    <div class="max-w-container-max mx-auto px-gutter pt-10 pb-8 relative z-10">
+      <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 bg-emerald-100/70 dark:bg-emerald-900/30 rounded-full px-3 py-1 mb-3"><span class="live-dot" aria-hidden="true"></span> Live status</p>
+      <h1 class="font-headline-lg text-headline-lg mb-1">Track a flight</h1>
+      <p class="text-on-surface-variant dark:text-slate-300 mb-6 max-w-2xl">Gate, delays, where the plane is right now and when it will land &mdash; refreshed automatically.</p>
+      <form id="track-form" novalidate class="glass-card dark:border-slate-700 border border-surface-variant rounded-2xl p-4 md:p-5 shadow-lg grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
+        <div class="md:col-span-5">
+          <div class="field-wrap border border-surface-variant dark:border-slate-600 rounded-lg p-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all bg-white dark:bg-slate-800">
+            <label for="trk-number" class="block font-label-md text-[10px] text-outline dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">Flight number</label>
+            <div class="flex items-center gap-xs"><span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">flight</span><input id="trk-number" name="number" data-field="number" autocomplete="off" autocapitalize="characters" maxlength="8" placeholder="e.g. 6E 245, AI 101" class="bare font-semibold w-full uppercase"/></div>
+          </div>
+          <p class="field-msg" data-msg="number" hidden></p>
+        </div>
+        <fieldset class="md:col-span-4">
+          <legend class="sr-only">Date</legend>
+          <div id="trk-days" class="grid grid-cols-3 gap-1 p-1 rounded-lg bg-surface-container-low dark:bg-slate-800 border border-surface-variant dark:border-slate-600 h-[62px]"></div>
+          <p class="field-msg" data-msg="date" hidden></p>
+        </fieldset>
+        <div class="md:col-span-3">
+          <button type="submit" class="w-full h-[62px] bg-brand hover:bg-primary text-white font-bold rounded-lg flex items-center justify-center gap-2 shadow-md"><span class="material-symbols-outlined" aria-hidden="true" data-trk-icon>radar</span> Track flight</button>
+        </div>
+      </form>
+      <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-3">Have a booking? Open your e-ticket and press <strong>Track</strong> next to the flight.</p>
+    </div>
+  </section>
+
+  <section class="max-w-container-max mx-auto px-gutter pt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter items-start">
+      <div class="lg:col-span-2 min-w-0" id="trk-main">
+        <div id="trk-matches" class="hidden mb-6"></div>
+        <div id="trk-empty" class="text-center py-14 bg-surface-container-low dark:bg-slate-800 rounded-2xl border border-dashed border-surface-variant dark:border-slate-700">
+          <span class="material-symbols-outlined text-[56px] text-primary/60 dark:text-sky-300/60" aria-hidden="true">travel_explore</span>
+          <p class="font-bold text-lg mt-2">Enter a flight number, or pick a plane that's in the air now</p>
+          <p class="text-on-surface-variant dark:text-slate-300 text-sm">Status updates every 15 seconds while this page is open.</p>
+        </div>
+        <article id="trk-detail" class="hidden" aria-live="off"></article>
+      </div>
+      <aside class="lg:sticky lg:top-20" aria-labelledby="live-h">
+        <div class="bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-2xl shadow-sm overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-4 border-b border-surface-variant dark:border-slate-700">
+            <h2 id="live-h" class="font-bold flex items-center gap-2"><span class="live-dot text-emerald-500" aria-hidden="true"></span> In the air now</h2>
+            <span class="text-xs text-on-surface-variant dark:text-slate-400">Busy routes</span>
+          </div>
+          <ul id="live-list" class="divide-y divide-surface-variant dark:divide-slate-700" aria-busy="true">
+            <li class="p-4"><div class="skeleton h-10"></div></li><li class="p-4"><div class="skeleton h-10"></div></li><li class="p-4"><div class="skeleton h-10"></div></li>
+          </ul>
+        </div>
+        <p class="text-[11px] text-on-surface-variant dark:text-slate-400 mt-3 px-1">Demo data: positions are simulated from the FlyCompare schedule, not a real radar feed.</p>
+      </aside>
+    </div>
+  </section>
+</main>

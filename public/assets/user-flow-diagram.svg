@@ -1,0 +1,117 @@
+<svg viewBox="0 0 1180 620" xmlns="http://www.w3.org/2000/svg" font-family="Plus Jakarta Sans, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#00677f"/>
+    </marker>
+    <marker id="arrowGrey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#94a3b8"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1180" height="620" fill="#f8fafc"/>
+  <text x="40" y="42" font-size="22" font-weight="700" fill="#0f172a">FlyCompare &#8212; User Flow Diagram</text>
+  <text x="40" y="64" font-size="13" fill="#475569">Primary booking journey (solid) with supporting nav pages and return paths (dashed)</text>
+
+  <!-- Main flow row y=150 -->
+  <!-- Home -->
+  <rect x="40" y="120" width="150" height="70" rx="10" fill="#00677f"/>
+  <text x="115" y="150" font-size="14" font-weight="700" fill="#ffffff" text-anchor="middle">Home</text>
+  <text x="115" y="168" font-size="11" fill="#d9f2ff" text-anchor="middle">index.html</text>
+
+  <!-- Results -->
+  <rect x="270" y="120" width="150" height="70" rx="10" fill="#ffffff" stroke="#00677f" stroke-width="2"/>
+  <text x="345" y="150" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Search Results</text>
+  <text x="345" y="168" font-size="11" fill="#475569" text-anchor="middle">results.html</text>
+
+  <!-- Booking -->
+  <rect x="500" y="120" width="150" height="70" rx="10" fill="#ffffff" stroke="#00677f" stroke-width="2"/>
+  <text x="575" y="145" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Passenger</text>
+  <text x="575" y="161" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Details</text>
+  <text x="575" y="178" font-size="11" fill="#475569" text-anchor="middle">booking.html</text>
+
+  <!-- Payment -->
+  <rect x="730" y="120" width="150" height="70" rx="10" fill="#ffffff" stroke="#00677f" stroke-width="2"/>
+  <text x="805" y="150" font-size="14" font-weight="700" fill="#0f172a" text-anchor="middle">Payment</text>
+  <text x="805" y="168" font-size="11" fill="#475569" text-anchor="middle">payment.html</text>
+
+  <!-- Confirmation -->
+  <rect x="960" y="120" width="150" height="70" rx="10" fill="#ecfdf5" stroke="#059669" stroke-width="2"/>
+  <text x="1035" y="150" font-size="14" font-weight="700" fill="#065f46" text-anchor="middle">Confirmation</text>
+  <text x="1035" y="168" font-size="11" fill="#059669" text-anchor="middle">confirmation.html</text>
+
+  <!-- Arrows main flow -->
+  <line x1="190" y1="155" x2="266" y2="155" stroke="#00677f" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="228" y="145" font-size="10" fill="#00677f" text-anchor="middle">Search Flights</text>
+
+  <line x1="420" y1="155" x2="496" y2="155" stroke="#00677f" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="458" y="145" font-size="10" fill="#00677f" text-anchor="middle">Book</text>
+
+  <line x1="650" y1="155" x2="726" y2="155" stroke="#00677f" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="688" y="145" font-size="10" fill="#00677f" text-anchor="middle">Continue</text>
+
+  <line x1="880" y1="155" x2="956" y2="155" stroke="#00677f" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="918" y="145" font-size="10" fill="#00677f" text-anchor="middle">Pay & Confirm</text>
+
+  <!-- Return / dashed edges -->
+  <path d="M345,190 C345,230 200,230 115,192" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrowGrey)"/>
+  <text x="230" y="243" font-size="10" fill="#64748b" text-anchor="middle">Modify Search</text>
+
+  <path d="M1035,190 C1035,260 300,270 115,192" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrowGrey)"/>
+  <text x="600" y="280" font-size="10" fill="#64748b" text-anchor="middle">Book Another Flight</text>
+
+  <path d="M575,120 C575,95 460,95 420,118" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrowGrey)"/>
+  <text x="490" y="90" font-size="10" fill="#64748b" text-anchor="middle">Back to results</text>
+
+  <path d="M805,120 C805,95 690,95 650,118" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrowGrey)"/>
+  <text x="720" y="90" font-size="10" fill="#64748b" text-anchor="middle">Back</text>
+
+  <!-- Empty / error states under booking flow -->
+  <rect x="270" y="330" width="150" height="55" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="345" y="353" font-size="11" font-weight="600" fill="#9a3412" text-anchor="middle">No search found</text>
+  <text x="345" y="368" font-size="10" fill="#c2410c" text-anchor="middle">&#8594; link back to Home</text>
+  <line x1="345" y1="190" x2="345" y2="326" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+  <rect x="500" y="330" width="150" height="55" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="575" y="353" font-size="11" font-weight="600" fill="#9a3412" text-anchor="middle">No flight selected</text>
+  <text x="575" y="368" font-size="10" fill="#c2410c" text-anchor="middle">&#8594; link back to Home</text>
+  <line x1="575" y1="190" x2="575" y2="326" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+  <rect x="730" y="330" width="150" height="55" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="805" y="353" font-size="11" font-weight="600" fill="#9a3412" text-anchor="middle">Details missing</text>
+  <text x="805" y="368" font-size="10" fill="#c2410c" text-anchor="middle">&#8594; link back to Home</text>
+  <line x1="805" y1="190" x2="805" y2="326" stroke="#fdba74" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+  <!-- Header nav branches from Home, visible on every page -->
+  <text x="40" y="440" font-size="13" font-weight="700" fill="#0f172a">Global header (present on every page)</text>
+
+  <rect x="40" y="460" width="150" height="55" rx="8" fill="#ffffff" stroke="#00677f" stroke-width="2"/>
+  <text x="115" y="483" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Offers</text>
+  <text x="115" y="500" font-size="10" fill="#475569" text-anchor="middle">offers.html</text>
+
+  <rect x="270" y="460" width="150" height="55" rx="8" fill="#ffffff" stroke="#00677f" stroke-width="2"/>
+  <text x="345" y="483" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Help Centre</text>
+  <text x="345" y="500" font-size="10" fill="#475569" text-anchor="middle">help.html</text>
+
+  <rect x="500" y="460" width="150" height="55" rx="8" fill="#ffffff" stroke-dasharray="4 4" stroke="#64748b" stroke-width="1.5"/>
+  <text x="575" y="483" font-size="13" font-weight="700" fill="#0f172a" text-anchor="middle">Login / Sign Up</text>
+  <text x="575" y="500" font-size="10" fill="#475569" text-anchor="middle">modal overlay</text>
+
+  <line x1="115" y1="460" x2="115" y2="194" stroke="#00677f" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="345" y1="460" x2="150" y2="194" stroke="#00677f" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <text x="230" y="420" font-size="10" fill="#00677f" text-anchor="middle">Apply Offer &#8594; back to Home</text>
+  <line x1="575" y1="460" x2="180" y2="194" stroke="#64748b" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrowGrey)"/>
+
+  <!-- Legend -->
+  <g transform="translate(830,440)">
+    <rect x="0" y="0" width="310" height="150" rx="10" fill="#ffffff" stroke="#e2e8f0"/>
+    <text x="16" y="26" font-size="12" font-weight="700" fill="#0f172a">Legend</text>
+    <line x1="16" y1="46" x2="46" y2="46" stroke="#00677f" stroke-width="2.5" marker-end="url(#arrow)"/>
+    <text x="54" y="50" font-size="11" fill="#334155">Primary booking flow / global nav</text>
+    <line x1="16" y1="70" x2="46" y2="70" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#arrowGrey)"/>
+    <text x="54" y="74" font-size="11" fill="#334155">Return / secondary path</text>
+    <rect x="16" y="86" width="30" height="16" rx="4" fill="#fff7ed" stroke="#fdba74" stroke-dasharray="3 3"/>
+    <text x="54" y="98" font-size="11" fill="#334155">Empty-state guard (missing data)</text>
+    <rect x="16" y="112" width="30" height="16" rx="4" fill="#ecfdf5" stroke="#059669"/>
+    <text x="54" y="124" font-size="11" fill="#334155">End state (booking complete)</text>
+  </g>
+</svg>

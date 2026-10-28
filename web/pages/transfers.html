@@ -1,0 +1,40 @@
+<!--meta {"title":"Cab & Bus from the Airport - FlyCompare","description":"App cabs, prepaid taxis, airport buses and metro from Indian airports, with fares and whether they run when you land.","nav":"transfers","scripts":["transfers"]} -->
+<main class="flex-grow w-full pb-xl" id="main-content">
+  <section class="relative overflow-hidden bg-gradient-to-b from-amber-50/70 to-white dark:from-slate-900 dark:to-slate-900 border-b border-surface-variant dark:border-slate-800">
+    <div class="max-w-container-max mx-auto px-gutter pt-10 pb-8 relative z-10">
+      <p class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-200 bg-amber-100 dark:bg-amber-900/30 rounded-full px-3 py-1 mb-3"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">local_taxi</span> Airport transfers</p>
+      <h1 class="font-headline-lg text-headline-lg mb-1">Cab or bus from the airport</h1>
+      <p class="text-on-surface-variant dark:text-slate-300 mb-6 max-w-2xl">See what's running when you land &mdash; app cabs, prepaid taxis, airport buses and metro &mdash; with typical fares and journey times.</p>
+      <form id="tr-form" novalidate class="glass-card dark:border-slate-700 border border-surface-variant rounded-2xl p-4 md:p-5 shadow-lg grid grid-cols-1 md:grid-cols-12 gap-3 items-start">
+        <div class="md:col-span-6">
+          <div class="field-wrap border border-surface-variant dark:border-slate-600 rounded-lg p-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all bg-white dark:bg-slate-800 relative">
+            <label for="tr-airport" class="block font-label-md text-[10px] text-outline dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">Arriving at</label>
+            <div class="flex items-center gap-xs"><span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">flight_land</span><input id="tr-airport" name="airport" data-field="airport" placeholder="City or airport" class="bare font-semibold w-full" type="text"/></div>
+          </div>
+          <p class="field-msg" data-msg="airport" hidden></p>
+        </div>
+        <div class="md:col-span-3">
+          <div class="field-wrap border border-surface-variant dark:border-slate-600 rounded-lg p-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all bg-white dark:bg-slate-800">
+            <label for="tr-time" class="block font-label-md text-[10px] text-outline dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">At the kerb (IST)</label>
+            <div class="flex items-center gap-xs"><span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">schedule</span><input id="tr-time" name="time" data-field="time" type="time" class="bare font-semibold w-full"/>
+              <button type="button" id="tr-now" class="text-xs font-bold text-primary dark:text-sky-300 border border-primary/40 rounded-full px-2 py-0.5 hover:bg-primary/10">Now</button></div>
+          </div>
+          <p class="field-msg" data-msg="time" hidden></p>
+        </div>
+        <div class="md:col-span-3">
+          <button type="submit" class="w-full h-[62px] bg-brand hover:bg-primary text-white font-bold rounded-lg flex items-center justify-center gap-2 shadow-md"><span class="material-symbols-outlined" aria-hidden="true">directions</span> Show options</button>
+        </div>
+      </form>
+      <div id="tr-quick" class="flex flex-wrap gap-2 mt-4" aria-label="Popular airports"></div>
+    </div>
+  </section>
+
+  <section class="max-w-container-max mx-auto px-gutter pt-8" aria-live="polite">
+    <div id="tr-empty" class="text-center py-14 bg-surface-container-low dark:bg-slate-800 rounded-2xl border border-dashed border-surface-variant dark:border-slate-700">
+      <span class="material-symbols-outlined text-[56px] text-amber-600/70" aria-hidden="true">airport_shuttle</span>
+      <p class="font-bold text-lg mt-2">Choose your arrival airport</p>
+      <p class="text-on-surface-variant dark:text-slate-300 text-sm">We'll check which cabs and buses are available at that time.</p>
+    </div>
+    <div id="tr-results" class="hidden"></div>
+  </section>
+</main>

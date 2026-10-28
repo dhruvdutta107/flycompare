@@ -1,0 +1,96 @@
+<!--meta {"title":"Flight results - FlyCompare","description":"Compare flights, filter by airline, stops and time, and pick the fare that suits you.","scripts":["results"],"noindex":true} -->
+<main class="flex-grow w-full pb-32" id="main-content">
+  <section class="bg-surface-container-low dark:bg-slate-800 border-b border-surface-variant dark:border-slate-700" aria-label="Search summary">
+    <div class="max-w-container-max mx-auto px-gutter py-4 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+        <span class="material-symbols-outlined text-primary dark:text-sky-300" aria-hidden="true">flight</span>
+        <span id="summary-route" class="font-bold text-lg"></span>
+        <span id="summary-date" class="text-on-surface-variant dark:text-slate-300 text-sm"></span>
+        <span id="summary-pax" class="text-on-surface-variant dark:text-slate-300 text-sm"></span>
+      </div>
+      <a id="modify-link" href="/" class="flex items-center gap-1 text-primary dark:text-sky-300 font-semibold text-sm border border-primary dark:border-sky-300 rounded-full px-4 py-1.5 hover:bg-primary/5"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">edit</span> Modify search</a>
+    </div>
+  </section>
+
+  <section class="max-w-container-max mx-auto px-gutter pt-6">
+    <div id="stepper" data-step="1" class="min-h-[28px]"></div>
+
+    <div id="no-search-msg" class="hidden text-center py-20">
+      <span class="material-symbols-outlined text-[48px] text-on-surface-variant" aria-hidden="true">travel_explore</span>
+      <p class="font-headline-md text-headline-md font-bold mt-2" id="no-search-title">No search found</p>
+      <p class="text-on-surface-variant dark:text-slate-300 mt-1 mb-4" id="no-search-text">Start by searching for a route from the home page.</p>
+      <a href="/" class="inline-block bg-primary text-on-primary font-bold px-6 py-3 rounded-lg">Go to Home</a>
+    </div>
+
+    <div id="results-wrap" class="hidden">
+      <!-- legs (return / multi-city) -->
+      <ol id="leg-tabs" class="flex gap-3 overflow-x-auto custom-scrollbar pb-2 mb-4" aria-label="Flights in this trip"></ol>
+
+      <!-- flexible dates -->
+      <div class="mb-6">
+        <p class="font-label-md text-label-md text-on-surface-variant dark:text-slate-300 uppercase mb-2">Flexible dates &mdash; cheapest fare per day</p>
+        <div id="date-strip" class="grid grid-cols-4 sm:grid-cols-7 gap-2" role="group" aria-label="Choose a different date"></div>
+      </div>
+
+      <div class="flex lg:hidden mb-4">
+        <button type="button" id="filters-toggle" class="flex items-center gap-2 border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-2 font-semibold" aria-expanded="false" aria-controls="filters-panel"><span class="material-symbols-outlined" aria-hidden="true">tune</span> Filters <span id="filters-badge" class="hidden bg-primary text-white text-xs rounded-full px-2 py-0.5"></span></button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-4 gap-gutter">
+        <aside id="filters-panel" class="hidden lg:block lg:col-span-1" aria-label="Filters">
+          <div class="bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-5 lg:sticky lg:top-20">
+            <div class="flex justify-between items-center mb-4"><h2 class="font-headline-md text-headline-md font-bold">Filters</h2><button type="button" id="reset-filters" class="text-primary dark:text-sky-300 text-sm font-semibold hover:underline">Reset</button></div>
+            <div class="space-y-6">
+              <fieldset><legend class="font-label-md text-label-md text-on-surface-variant dark:text-slate-300 uppercase mb-2">Stops</legend>
+                <div id="filter-stops" class="space-y-2">
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" value="0" checked class="rounded text-primary focus:ring-primary"/><span>Non-stop</span></label>
+                  <label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" value="1" checked class="rounded text-primary focus:ring-primary"/><span>1 Stop</span></label>
+                </div></fieldset>
+              <fieldset><legend class="font-label-md text-label-md text-on-surface-variant dark:text-slate-300 uppercase mb-2">Airlines</legend><div id="filter-airlines" class="space-y-2"></div></fieldset>
+              <fieldset><legend class="font-label-md text-label-md text-on-surface-variant dark:text-slate-300 uppercase mb-2">Departure time</legend>
+                <div id="filter-time" class="grid grid-cols-2 gap-2">
+                  <button type="button" data-slot="early" aria-pressed="true" class="slot-btn border rounded-lg p-2 text-center text-xs"><span class="material-symbols-outlined block mx-auto text-[20px]" aria-hidden="true">wb_twilight</span>Before 6am</button>
+                  <button type="button" data-slot="morning" aria-pressed="true" class="slot-btn border rounded-lg p-2 text-center text-xs"><span class="material-symbols-outlined block mx-auto text-[20px]" aria-hidden="true">wb_sunny</span>6am - 12pm</button>
+                  <button type="button" data-slot="afternoon" aria-pressed="true" class="slot-btn border rounded-lg p-2 text-center text-xs"><span class="material-symbols-outlined block mx-auto text-[20px]" aria-hidden="true">brightness_5</span>12pm - 6pm</button>
+                  <button type="button" data-slot="evening" aria-pressed="true" class="slot-btn border rounded-lg p-2 text-center text-xs"><span class="material-symbols-outlined block mx-auto text-[20px]" aria-hidden="true">dark_mode</span>After 6pm</button>
+                </div></fieldset>
+              <div><label for="price-max" class="font-label-md text-label-md text-on-surface-variant dark:text-slate-300 uppercase mb-2 block">Max price <span id="price-max-label" class="normal-case font-bold text-primary dark:text-sky-300"></span></label>
+                <input id="price-max" type="range" class="w-full accent-[#00677f]" min="0" max="0" step="100" value="0"/></div>
+            </div>
+          </div>
+        </aside>
+
+        <div class="lg:col-span-3">
+          <div class="flex flex-wrap justify-between items-end gap-3 mb-4">
+            <div><h2 class="font-headline-md text-headline-md font-bold"><span id="results-count">0</span> flights found</h2><p id="results-sub" class="text-sm text-on-surface-variant dark:text-slate-300"></p></div>
+            <div><label for="sort-select" class="sr-only">Sort by</label>
+              <select id="sort-select" class="border border-surface-variant dark:border-slate-600 rounded-lg pl-4 pr-10 py-2 bg-surface-container-lowest dark:bg-slate-800 font-semibold focus:border-primary">
+                <option value="price">Cheapest first</option><option value="duration">Fastest first</option><option value="departure">Earliest first</option><option value="arrival">Arrives earliest</option>
+              </select></div>
+          </div>
+          <div id="flights-list" class="space-y-4" aria-live="polite"></div>
+          <div id="empty-results" class="hidden text-center py-16 bg-surface-container-low dark:bg-slate-800 rounded-xl">
+            <span class="material-symbols-outlined text-[48px] text-on-surface-variant" aria-hidden="true">search_off</span>
+            <p class="font-bold text-lg mt-2" id="empty-title">No flights match your filters</p>
+            <p class="text-on-surface-variant dark:text-slate-300 mb-4" id="empty-text">Try widening your filters to see more results.</p>
+            <button type="button" id="empty-reset" class="bg-primary text-on-primary font-bold px-6 py-2 rounded-lg">Reset filters</button>
+          </div>
+          <div id="load-error" class="hidden text-center py-16 bg-red-50 dark:bg-red-950/30 rounded-xl border border-red-200 dark:border-red-900">
+            <span class="material-symbols-outlined text-[48px] text-red-600" aria-hidden="true">cloud_off</span>
+            <p class="font-bold text-lg mt-2">We couldn't load flights</p><p id="load-error-text" class="text-on-surface-variant dark:text-slate-300 mb-4"></p>
+            <button type="button" id="retry-load" class="bg-primary text-on-primary font-bold px-6 py-2 rounded-lg">Try again</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trip bar -->
+  <div id="trip-bar" class="no-print hidden fixed bottom-0 inset-x-0 z-40 bg-surface-container-lowest/95 dark:bg-slate-900/95 backdrop-blur border-t border-surface-variant dark:border-slate-700 shadow-[0_-8px_30px_rgba(0,0,0,.08)]">
+    <div class="max-w-container-max mx-auto px-gutter py-3 flex flex-wrap items-center justify-between gap-3">
+      <div id="trip-bar-text" class="text-sm min-w-0"></div>
+      <div class="flex items-center gap-4"><div class="text-right"><p class="text-[11px] text-on-surface-variant dark:text-slate-400" id="trip-bar-label">Total</p><p id="trip-bar-total" class="font-price-display text-xl font-bold text-primary dark:text-sky-300"></p></div>
+        <button type="button" id="continue-btn" class="bg-primary text-on-primary font-bold px-6 py-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 flex items-center gap-2" disabled><span id="continue-text">Continue</span><span class="material-symbols-outlined animate-spin hidden" id="continue-spin" aria-hidden="true">progress_activity</span></button></div>
+    </div>
+  </div>
+</main>

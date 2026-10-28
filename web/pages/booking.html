@@ -1,0 +1,40 @@
+<!--meta {"title":"Passenger details - FlyCompare","scripts":["booking"],"noindex":true} -->
+<main class="flex-grow w-full pb-xl" id="main-content">
+  <section class="max-w-container-max mx-auto px-gutter pt-8">
+    <div id="stepper" data-step="2" class="min-h-[28px]"></div>
+    <div id="state-msg" class="hidden text-center py-20"></div>
+    <div id="booking-wrap" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+      <div class="lg:col-span-2">
+        <div class="bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-6 shadow-sm">
+          <h1 class="font-headline-md text-headline-md font-bold">Passenger Details</h1>
+          <p class="text-sm text-on-surface-variant dark:text-slate-300 mb-6">Enter details exactly as on your government ID. Fields marked with a red border need your attention.</p>
+          <form id="passenger-form" novalidate>
+            <div id="passenger-fields"></div>
+            <div class="mt-2 pt-4 border-t border-surface-variant dark:border-slate-700">
+              <p class="font-label-md text-label-md text-on-surface-variant dark:text-slate-300 uppercase mb-3">Contact details</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div><label for="contact-email" class="block text-sm font-semibold mb-1">Email address</label>
+                  <input id="contact-email" name="email" data-field="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-3 py-2.5 bg-transparent focus:border-primary"/><p class="field-msg" data-msg="email" hidden></p></div>
+                <div><label for="contact-phone" class="block text-sm font-semibold mb-1">Mobile number</label>
+                  <div class="flex"><span class="inline-flex items-center px-3 border border-r-0 border-surface-variant dark:border-slate-600 rounded-l-lg text-sm text-on-surface-variant dark:text-slate-300 bg-surface-container-low dark:bg-slate-700">+91</span>
+                  <input id="contact-phone" name="phone" data-field="phone" type="tel" autocomplete="tel-national" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" class="w-full border border-surface-variant dark:border-slate-600 rounded-r-lg rounded-l-none px-3 py-2.5 bg-transparent focus:border-primary"/></div><p class="field-msg" data-msg="phone" hidden></p></div>
+              </div>
+              <p class="text-xs text-on-surface-variant dark:text-slate-400 mt-2">We save your booking under this e-mail. You will need it with your PNR to manage the trip later.</p>
+            </div>
+            <p class="field-msg mt-4" data-msg="_form" hidden></p>
+            <div class="flex flex-col-reverse sm:flex-row justify-between items-center gap-3 mt-8">
+              <a id="back-link" href="/" class="flex items-center gap-1 text-on-surface-variant dark:text-slate-300 hover:text-primary font-semibold"><span class="material-symbols-outlined" aria-hidden="true">arrow_back</span> Back to results</a>
+              <button type="submit" id="continue-pay" class="w-full sm:w-auto bg-primary text-on-primary font-bold px-8 py-3 rounded-lg hover:bg-primary/90 disabled:opacity-60 flex items-center justify-center gap-2"><span id="continue-pay-text">Continue to Payment</span></button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <aside class="lg:col-span-1" aria-label="Trip summary">
+        <div class="bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-6 shadow-sm lg:sticky lg:top-20">
+          <h2 class="font-headline-md text-headline-md font-bold mb-4">Trip Summary</h2>
+          <div id="trip-summary" class="space-y-4 text-sm"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>

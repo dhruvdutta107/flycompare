@@ -1,0 +1,46 @@
+<div id="auth-modal" class="fixed inset-0 z-[90] hidden" role="dialog" aria-modal="true" aria-labelledby="auth-title">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-close-modal="auth-modal"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto bg-surface-container-lowest dark:bg-slate-800 rounded-2xl shadow-2xl p-8 border border-surface-variant dark:border-slate-700 fade-in">
+    <div class="flex justify-between items-center mb-6">
+      <h2 id="auth-title" class="font-headline-md text-headline-md font-bold">Welcome back</h2>
+      <button type="button" data-close-modal="auth-modal" class="text-on-surface-variant dark:text-slate-300 hover:text-on-background" aria-label="Close"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+    </div>
+
+    <form id="login-form" class="space-y-4" novalidate data-auth-form="login">
+      <div>
+        <label for="login-email" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Email</label>
+        <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="email" hidden></p>
+      </div>
+      <div>
+        <label for="login-password" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Password</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Your password" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="password" hidden></p>
+      </div>
+      <p class="field-msg" data-msg="_form" hidden></p>
+      <button type="submit" class="w-full bg-primary text-on-primary font-bold py-3 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-60">Login</button>
+      <p class="text-center text-sm text-on-surface-variant dark:text-slate-300 mt-4">Don't have an account? <button type="button" data-auth-switch="register" class="text-primary dark:text-sky-300 font-semibold hover:underline">Sign up</button></p>
+    </form>
+
+    <form id="register-form" class="space-y-4 hidden" novalidate data-auth-form="register">
+      <div>
+        <label for="reg-name" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Full name</label>
+        <input id="reg-name" name="name" type="text" autocomplete="name" placeholder="Your name" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="name" hidden></p>
+      </div>
+      <div>
+        <label for="reg-email" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Email</label>
+        <input id="reg-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="email" hidden></p>
+      </div>
+      <div>
+        <label for="reg-password" class="block font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-1">Password</label>
+        <input id="reg-password" name="password" type="password" autocomplete="new-password" placeholder="8+ characters, with a number" class="w-full border border-surface-variant dark:border-slate-600 rounded-lg px-4 py-3 bg-transparent focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"/>
+        <p class="field-msg" data-msg="password" hidden></p>
+      </div>
+      <p class="field-msg" data-msg="_form" hidden></p>
+      <button type="submit" class="w-full bg-primary text-on-primary font-bold py-3 rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-60">Create account</button>
+      <p class="text-center text-sm text-on-surface-variant dark:text-slate-300 mt-4">Already registered? <button type="button" data-auth-switch="login" class="text-primary dark:text-sky-300 font-semibold hover:underline">Log in</button></p>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div id="mobile-menu" class="fixed inset-0 z-[80] hidden" role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" data-toggle-menu></div>
+  <div class="absolute right-0 top-0 h-full w-72 bg-surface-container-lowest dark:bg-slate-900 shadow-2xl slide-in-right p-6 flex flex-col gap-6">
+    <div class="flex justify-between items-center">
+      <span class="font-headline-md font-bold text-headline-md">Menu</span>
+      <button type="button" data-toggle-menu class="text-on-surface-variant dark:text-slate-300 hover:text-on-background" aria-label="Close menu"><span class="material-symbols-outlined" aria-hidden="true">close</span></button>
+    </div>
+    <nav class="flex flex-col gap-4 font-label-md text-label-md" aria-label="Mobile">
+      <a data-nav-link="flights" href="/" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Flights</a>
+      <a data-nav-link="track" href="/track.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Track Flight</a>
+      <a data-nav-link="transfers" href="/transfers.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Cab &amp; Bus from Airport</a>
+      <a data-nav-link="offers" href="/offers.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Offers</a>
+      <a data-nav-link="trips" href="/trips.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">My Trips</a>
+      <a data-nav-link="help" href="/help.html" class="mnav text-on-surface-variant dark:text-slate-300 hover:text-primary pl-3 border-l-2 border-transparent">Help</a>
+    </nav>
+    <div class="mt-auto pt-6 border-t border-surface-variant dark:border-slate-700" id="mobile-auth-area">
+      <button type="button" data-open-auth="login" class="w-full bg-primary text-on-primary font-bold py-3 rounded-lg flex items-center justify-center gap-2"><span class="material-symbols-outlined text-sm" aria-hidden="true">person</span> Login / Sign Up</button>
+    </div>
+  </div>
+</div>

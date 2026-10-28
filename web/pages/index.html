@@ -1,0 +1,182 @@
+<!--meta {"title":"FlyCompare - Compare. Book. Fly.","description":"Compare domestic flight fares across airlines in one search and book with confidence.","nav":"flights","scripts":["index"]} -->
+<main class="flex-grow flex flex-col relative w-full pb-xl" id="main-content">
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="absolute top-0 inset-x-0 h-[480px] overflow-hidden pointer-events-none z-0" aria-hidden="true">
+    <svg class="hero-route" viewBox="0 0 1200 480" preserveAspectRatio="xMidYMid slice">
+      <g class="cloud" opacity=".55"><ellipse cx="80" cy="110" rx="70" ry="18" fill="#fff"/><ellipse cx="110" cy="96" rx="40" ry="20" fill="#fff"/></g>
+      <g class="cloud c2" opacity=".4"><ellipse cx="40" cy="300" rx="90" ry="20" fill="#fff"/><ellipse cx="80" cy="284" rx="46" ry="22" fill="#fff"/></g>
+      <path id="hero-arc" class="route-line" d="M-40 100 C 250 20, 520 95, 760 52 S 1100 12, 1260 64" fill="none" stroke="#0074b6" stroke-opacity=".35" stroke-width="2.5" stroke-linecap="round"/>
+      <g class="plane">
+        <g transform="rotate(90) scale(1.4)"><path d="M0 -12 L2 -4 L11 1 L11 3 L2 0.5 L1.5 7 L4.5 9.5 L4.5 11 L0 9.8 L-4.5 11 L-4.5 9.5 L-1.5 7 L-2 0.5 L-11 3 L-11 1 L-2 -4 Z" fill="#00677f" fill-opacity=".75"/></g>
+        <animateMotion dur="16s" repeatCount="indefinite" rotate="auto" keyPoints="0;1" keyTimes="0;1" calcMode="spline" keySplines=".45 0 .55 1"><mpath href="#hero-arc"/></animateMotion>
+      </g>
+    </svg>
+  </div>
+
+  <section class="w-full max-w-container-max mx-auto px-gutter pt-12 md:pt-xl pb-md text-center relative z-10 mt-4 md:mt-8">
+    <h1 class="font-headline-xl text-headline-lg md:text-headline-xl text-primary dark:text-sky-300 mb-xs">Compare fares across airlines. Book with confidence.</h1>
+    <p class="text-on-surface-variant dark:text-slate-300 text-body-md max-w-2xl mx-auto hidden md:block">One search, every airline &mdash; the simplicity of Skyscanner with the trust of IRCTC Air.</p>
+  </section>
+
+  <!-- Search card -->
+  <section class="w-full max-w-container-max mx-auto px-gutter relative z-20" aria-label="Flight search">
+    <form id="search-form" novalidate class="glass-card dark:border-slate-700 rounded-xl p-4 md:p-md shadow-lg border border-surface-variant relative">
+      <div class="flex gap-2 mb-md flex-wrap" id="trip-tabs" role="group" aria-label="Trip type">
+        <button type="button" data-trip="return" aria-pressed="true" class="trip-tab px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-xs transition-all"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">sync_alt</span> Return</button>
+        <button type="button" data-trip="oneway" aria-pressed="false" class="trip-tab px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-xs transition-all"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_forward</span> One way</button>
+        <button type="button" data-trip="multicity" aria-pressed="false" class="trip-tab px-4 py-2 rounded-lg font-label-md text-label-md flex items-center gap-xs transition-all"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">route</span> Multi-city</button>
+      </div>
+
+      <!-- Return / one-way fields -->
+      <div id="simple-fields" class="grid grid-cols-1 md:grid-cols-12 gap-sm mb-sm relative">
+        <div class="md:col-span-3">
+          <div class="field-wrap border border-surface-variant dark:border-slate-600 rounded-lg p-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all bg-white dark:bg-slate-800 relative">
+            <label for="input-from" class="block font-label-md text-[10px] text-outline dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">From</label>
+            <div class="flex items-center gap-xs">
+              <span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">location_on</span>
+              <input id="input-from" name="from" data-field="from" class="bare text-on-background dark:text-white font-body-md font-semibold w-full" type="text" placeholder="City or airport" value="Mumbai (BOM)" data-code="BOM"/>
+            </div>
+            <button type="button" data-swap id="swap-desktop" class="absolute right-[-26px] top-1/2 -translate-y-1/2 z-30 hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-surface-container-low dark:bg-slate-700 border border-surface-variant dark:border-slate-500 hover:bg-primary hover:text-white transition-colors" aria-label="Swap origin and destination"><span class="material-symbols-outlined text-[16px]" aria-hidden="true">sync_alt</span></button>
+          </div>
+          <p class="field-msg" data-msg="from" hidden></p>
+        </div>
+        <!-- Lab 8 fix: swap control is now also available between the fields on mobile -->
+        <div class="md:hidden flex justify-center -my-2 z-10">
+          <button type="button" data-swap id="swap-mobile" class="flex items-center gap-2 text-sm font-semibold text-primary dark:text-sky-300 px-4 py-1.5 rounded-full border border-surface-variant dark:border-slate-600 bg-surface-container-low dark:bg-slate-700" aria-label="Swap origin and destination"><span class="material-symbols-outlined text-[18px] rotate-90" aria-hidden="true">sync_alt</span> Swap</button>
+        </div>
+        <div class="md:col-span-3 md:ml-4">
+          <div class="field-wrap border border-surface-variant dark:border-slate-600 rounded-lg p-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all bg-white dark:bg-slate-800 relative">
+            <label for="input-to" class="block font-label-md text-[10px] text-outline dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">To</label>
+            <div class="flex items-center gap-xs">
+              <span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">location_on</span>
+              <input id="input-to" name="to" data-field="to" class="bare text-on-background dark:text-white font-body-md font-semibold w-full" type="text" placeholder="City or airport" value="New Delhi (DEL)" data-code="DEL"/>
+            </div>
+          </div>
+          <p class="field-msg" data-msg="to" hidden></p>
+        </div>
+        <div class="md:col-span-3">
+          <div class="field-wrap border border-surface-variant dark:border-slate-600 rounded-lg p-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all bg-white dark:bg-slate-800">
+            <label for="date-depart" class="block font-label-md text-[10px] text-outline dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">Depart</label>
+            <div class="flex items-center gap-xs"><span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">calendar_today</span><input id="date-depart" name="date" data-field="date" type="date" class="bare text-on-background dark:text-white font-body-md font-semibold w-full cursor-pointer"/></div>
+          </div>
+          <p class="field-msg" data-msg="date" hidden></p>
+        </div>
+        <div class="md:col-span-3" id="return-container">
+          <div class="field-wrap border border-surface-variant dark:border-slate-600 rounded-lg p-sm focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all bg-white dark:bg-slate-800">
+            <label for="date-return" class="block font-label-md text-[10px] text-outline dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">Return</label>
+            <div class="flex items-center gap-xs"><span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">calendar_today</span><input id="date-return" name="return" data-field="return" type="date" class="bare text-on-background dark:text-white font-body-md font-semibold w-full cursor-pointer"/></div>
+          </div>
+          <p class="field-msg" data-msg="return" hidden></p>
+        </div>
+      </div>
+
+      <!-- Multi-city legs -->
+      <div id="multi-fields" class="hidden mb-sm space-y-3" aria-live="polite">
+        <div id="legs-list" class="space-y-3"></div>
+        <button type="button" id="add-leg" class="text-primary dark:text-sky-300 font-semibold text-sm flex items-center gap-1 hover:underline"><span class="material-symbols-outlined text-[18px]" aria-hidden="true">add_circle</span> Add another flight</button>
+        <p class="field-msg" data-msg="legs" hidden></p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-sm items-center mt-md">
+        <div class="md:col-span-3 relative">
+          <button type="button" id="travellers-btn" aria-haspopup="dialog" aria-expanded="false" aria-controls="travellers-pop" class="field-wrap w-full text-left border border-surface-variant dark:border-slate-600 rounded-lg p-sm hover:border-primary focus:border-primary transition-all bg-white dark:bg-slate-800">
+            <span class="block font-label-md text-[10px] text-outline dark:text-slate-400 uppercase tracking-wider mb-1 font-bold">Travellers &amp; Class</span>
+            <span class="flex items-center justify-between"><span class="flex items-center gap-xs min-w-0"><span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">person</span><span id="travellers-display" class="font-semibold truncate">1 Adult, Economy</span></span><span class="material-symbols-outlined text-outline text-[18px]" aria-hidden="true">expand_more</span></span>
+          </button>
+          <div id="travellers-pop" role="dialog" aria-label="Travellers and class" hidden class="absolute left-0 top-full mt-2 w-full min-w-[300px] z-40 bg-surface-container-lowest dark:bg-slate-800 rounded-xl shadow-2xl border border-surface-variant dark:border-slate-600 p-5 fade-in">
+            <div class="space-y-4">
+              <div class="flex justify-between items-center"><div><p class="font-semibold">Adults</p><p class="text-xs text-on-surface-variant dark:text-slate-400">12+ years</p></div>
+                <div class="flex items-center gap-3"><button type="button" data-pax="adults" data-d="-1" class="w-8 h-8 rounded-full border border-surface-variant dark:border-slate-500 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-700 disabled:opacity-30" aria-label="Fewer adults"><span class="material-symbols-outlined text-sm" aria-hidden="true">remove</span></button><span id="count-adults" class="w-5 text-center font-bold" aria-live="polite">1</span><button type="button" data-pax="adults" data-d="1" class="w-8 h-8 rounded-full border border-surface-variant dark:border-slate-500 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-700 disabled:opacity-30" aria-label="More adults"><span class="material-symbols-outlined text-sm" aria-hidden="true">add</span></button></div></div>
+              <div class="flex justify-between items-center"><div><p class="font-semibold">Children</p><p class="text-xs text-on-surface-variant dark:text-slate-400">2-11 years</p></div>
+                <div class="flex items-center gap-3"><button type="button" data-pax="children" data-d="-1" class="w-8 h-8 rounded-full border border-surface-variant dark:border-slate-500 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-700 disabled:opacity-30" aria-label="Fewer children"><span class="material-symbols-outlined text-sm" aria-hidden="true">remove</span></button><span id="count-children" class="w-5 text-center font-bold" aria-live="polite">0</span><button type="button" data-pax="children" data-d="1" class="w-8 h-8 rounded-full border border-surface-variant dark:border-slate-500 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-700 disabled:opacity-30" aria-label="More children"><span class="material-symbols-outlined text-sm" aria-hidden="true">add</span></button></div></div>
+              <div class="flex justify-between items-center"><div><p class="font-semibold">Infants</p><p class="text-xs text-on-surface-variant dark:text-slate-400">Under 2 years (one per adult)</p></div>
+                <div class="flex items-center gap-3"><button type="button" data-pax="infants" data-d="-1" class="w-8 h-8 rounded-full border border-surface-variant dark:border-slate-500 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-700 disabled:opacity-30" aria-label="Fewer infants"><span class="material-symbols-outlined text-sm" aria-hidden="true">remove</span></button><span id="count-infants" class="w-5 text-center font-bold" aria-live="polite">0</span><button type="button" data-pax="infants" data-d="1" class="w-8 h-8 rounded-full border border-surface-variant dark:border-slate-500 flex items-center justify-center hover:bg-surface-container-low dark:hover:bg-slate-700 disabled:opacity-30" aria-label="More infants"><span class="material-symbols-outlined text-sm" aria-hidden="true">add</span></button></div></div>
+            </div>
+            <p id="pax-hint" class="text-xs text-on-surface-variant dark:text-slate-400 mt-3">You can book up to 9 seats at once.</p>
+            <fieldset class="mt-4 pt-4 border-t border-surface-variant dark:border-slate-600"><legend class="font-label-md text-label-md text-on-surface-variant dark:text-slate-300 mb-2 uppercase">Cabin class</legend>
+              <div class="space-y-2">
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cabin" value="Economy" checked class="text-primary focus:ring-primary"/><span>Economy</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cabin" value="Premium Economy" class="text-primary focus:ring-primary"/><span>Premium Economy</span></label>
+                <label class="flex items-center gap-2 cursor-pointer"><input type="radio" name="cabin" value="Business" class="text-primary focus:ring-primary"/><span>Business</span></label>
+              </div></fieldset>
+            <button type="button" id="travellers-done" class="w-full bg-primary text-on-primary font-bold py-2 rounded-lg mt-4 hover:bg-primary/90 transition-colors">Done</button>
+          </div>
+        </div>
+        <div class="md:col-span-3 flex items-center gap-xs">
+          <input class="rounded border-outline text-primary focus:ring-primary h-4 w-4 cursor-pointer" id="direct-flights" type="checkbox"/>
+          <label class="font-body-md text-on-surface-variant dark:text-slate-300 cursor-pointer text-sm select-none" for="direct-flights">Direct flights only</label>
+        </div>
+        <div class="md:col-span-6 flex md:justify-end">
+          <button type="submit" id="search-btn" class="w-full md:w-auto bg-brand hover:bg-primary text-on-primary text-body-md px-10 py-3 rounded-lg font-bold shadow-md transition-all flex items-center justify-center gap-2 disabled:opacity-70">
+            <span class="material-symbols-outlined" aria-hidden="true">search</span><span id="search-btn-text">Search Flights</span>
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+
+  <!-- Value propositions -->
+  <section class="w-full max-w-container-max mx-auto px-gutter mt-12" aria-label="Why FlyCompare">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-sm">
+      <div style="--d:0ms" class="reveal lift bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-4 flex items-start gap-4 shadow-sm">
+        <div class="bg-indigo-50 dark:bg-indigo-900/30 p-3 rounded-lg text-indigo-600 dark:text-indigo-300"><span class="material-symbols-outlined" aria-hidden="true">sell</span></div>
+        <div><h2 class="font-headline-md text-body-md font-bold mb-1">Best Prices</h2><p class="text-on-surface-variant dark:text-slate-300 text-xs">Every airline side by side, sortable by price, speed or time.</p></div>
+      </div>
+      <div style="--d:80ms" class="reveal lift bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-4 flex items-start gap-4 shadow-sm">
+        <div class="bg-emerald-50 dark:bg-emerald-900/30 p-3 rounded-lg text-emerald-600 dark:text-emerald-300"><span class="material-symbols-outlined" aria-hidden="true">verified_user</span></div>
+        <div><h2 class="font-headline-md text-body-md font-bold mb-1">Trusted &amp; Secure</h2><p class="text-on-surface-variant dark:text-slate-300 text-xs">Clear fare breakdown, a locked price while you book, and encrypted sessions.</p></div>
+      </div>
+      <div style="--d:160ms" class="reveal lift bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-4 flex items-start gap-4 shadow-sm">
+        <div class="bg-orange-50 dark:bg-orange-900/30 p-3 rounded-lg text-orange-600 dark:text-orange-300"><span class="material-symbols-outlined" aria-hidden="true">redeem</span></div>
+        <div><h2 class="font-headline-md text-body-md font-bold mb-1">Great Offers</h2><p class="text-on-surface-variant dark:text-slate-300 text-xs">Promo codes that apply automatically at checkout.</p></div>
+      </div>
+      <div style="--d:240ms" class="reveal lift bg-surface-container-lowest dark:bg-slate-800 border border-surface-variant dark:border-slate-700 rounded-xl p-4 flex items-start gap-4 shadow-sm">
+        <div class="bg-purple-50 dark:bg-purple-900/30 p-3 rounded-lg text-purple-600 dark:text-purple-300"><span class="material-symbols-outlined" aria-hidden="true">support_agent</span></div>
+        <div><h2 class="font-headline-md text-body-md font-bold mb-1">Easy Support</h2><p class="text-on-surface-variant dark:text-slate-300 text-xs">Manage or cancel any booking with just your PNR and e-mail.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Travel tools (new) -->
+  <section class="w-full max-w-container-max mx-auto px-gutter mt-12" aria-labelledby="tools-h">
+    <h2 id="tools-h" class="sr-only">Travel tools</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-sm">
+      <a href="/track.html" class="reveal lift group relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br from-[#0b1f2a] to-[#0f3a4f] text-white border border-slate-800">
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-emerald-300"><span class="live-dot" aria-hidden="true"></span> Live</span>
+        <h3 class="font-headline-md text-headline-md font-bold mt-2">Track a flight</h3>
+        <p class="text-sm text-slate-300 mt-1">Gate, delays and the plane's position, refreshed every 15 seconds.</p>
+        <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[96px] text-white/10 transition-transform duration-500 group-hover:translate-x-2 group-hover:-translate-y-2" aria-hidden="true">flight</span>
+      </a>
+      <a href="/transfers.html" style="--d:80ms" class="reveal lift group relative overflow-hidden rounded-2xl p-5 bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-950/40 dark:to-orange-950/30 border border-amber-200 dark:border-amber-900/50">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-800 dark:text-amber-300">After you land</span>
+        <h3 class="font-headline-md text-headline-md font-bold mt-2">Cab or bus from the airport</h3>
+        <p class="text-sm text-on-surface-variant dark:text-slate-300 mt-1">Fares, journey times and what's still running at your arrival time.</p>
+        <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[96px] text-amber-600/15 transition-transform duration-500 group-hover:translate-x-2" aria-hidden="true">local_taxi</span>
+      </a>
+      <button type="button" data-open-chat="" style="--d:160ms" class="reveal lift group relative overflow-hidden text-left rounded-2xl p-5 bg-gradient-to-br from-sky-50 to-indigo-100 dark:from-sky-950/40 dark:to-indigo-950/30 border border-sky-200 dark:border-sky-900/50">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-700 dark:text-indigo-300">24/7 help</span>
+        <span class="block font-headline-md text-headline-md font-bold mt-2">Ask the assistant</span>
+        <span class="block text-sm text-on-surface-variant dark:text-slate-300 mt-1">Refunds, baggage, flight status or your booking &mdash; answered in seconds.</span>
+        <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[96px] text-indigo-600/15 transition-transform duration-500 group-hover:-rotate-12" aria-hidden="true">support_agent</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Best deals -->
+  <section class="reveal w-full max-w-container-max mx-auto px-gutter mt-12" aria-labelledby="deals-h">
+    <div class="bg-surface-container-lowest dark:bg-slate-800 rounded-2xl p-6 shadow-sm border border-surface-variant dark:border-slate-700">
+      <div class="flex justify-between items-center mb-6">
+        <h2 id="deals-h" class="font-headline-md text-headline-md font-bold">Best Deals from Mumbai</h2>
+        <a href="/offers.html" class="text-primary dark:text-sky-300 font-label-md text-sm font-semibold hover:underline">View all offers</a>
+      </div>
+      <div id="deals-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <div class="skeleton h-52"></div><div class="skeleton h-52"></div><div class="skeleton h-52"></div><div class="skeleton h-52 hidden md:block"></div><div class="skeleton h-52 hidden lg:block"></div><div class="skeleton h-52 hidden lg:block"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="recent-searches" class="w-full max-w-container-max mx-auto px-gutter mt-12 hidden" aria-labelledby="recent-h">
+    <div class="flex items-center justify-between mb-4"><h2 id="recent-h" class="font-headline-md text-headline-md font-bold">Recent Searches</h2><button type="button" id="clear-recent" class="text-sm text-on-surface-variant dark:text-slate-400 hover:text-primary hover:underline">Clear</button></div>
+    <div id="recent-list" class="flex gap-3 overflow-x-auto custom-scrollbar pb-2"></div>
+  </section>
+</main>
